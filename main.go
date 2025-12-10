@@ -54,6 +54,8 @@ func parseGRID(line string) (*Node, error) {
 
 	node := &Node{}
 
+	fmt.Print(fields, "\n")
+
 	// ID (Feld 1)
 	node.ID, _ = strconv.Atoi(fields[1])
 
@@ -108,7 +110,7 @@ func main() {
 
 	// Ausgabe der ersten paar Knoten
 	for id, node := range model.Nodes {
-		if id > 5 {
+		if id > 10 {
 			break
 		}
 		fmt.Printf("Node %d: (%.3f, %.3f, %.3f)\n",
