@@ -99,3 +99,67 @@
 // func (p *ShellProperty) ID() int { return p.id }
 // func (p *ShellProperty) Mid() int { return p.mid }
 // func (p *ShellProperty) Type() string { return "PSHELL" }
+
+
+
+
+
+func readNastranCards(filename string) ([]string, error) {
+    file, err := os.Open(filename)
+    if err != nil {
+        return nil, err
+    }
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    var cards []string
+    var currentCard strings.Builder
+
+    for scanner.Scan() {
+        line := strings.TrimSpace(scanner.Text())
+        
+        // Kommentar-Zeilen überspringen ($)
+        if strings.HasPrefix(line, "$") {
+            continue
+        }
+        
+        // Leere Zeilen = Kartentrenner
+        if line == "" {
+            if currentCard.Len() > 0 {
+                cards = append(cards, strings.TrimSpace(currentCard.String()))
+                currentCard.Reset()
+            }
+            continue
+        }
+        
+        // Karte anhängen (free format: + für continuation)
+        currentCard.WriteString(line + " ")
+        
+        // Optional: Prüfe auf Continuation-Marker
+        if strings.HasSuffix(line, "+") {
+            continue // Nächste Zeile anhängen
+        }
+        
+        // Karte fertig → speichern
+        cards = append(cards, strings.TrimSpace(currentCard.String()))
+        currentCard.Reset()
+    }
+    
+    // Letzte Karte prüfen
+    if currentCard.Len() > 0 {
+        cards = append(cards, strings.TrimSpace(currentCard.String()))
+    }
+
+    return cards, scanner.Err()
+}
+
+func main() {
+    cards, err := readNastranCards("input.nas")
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    for i, card := range cards {
+        fmt.Printf("Karte %d: %s\n", i+1, card)
+    }
+}

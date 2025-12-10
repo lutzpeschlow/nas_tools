@@ -11,12 +11,13 @@ import (
 )
 
 func ReadDat(filename string, obj *objects.Model) error {
+	// open file, with defer as backup
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-
+	// scan file and assign data
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
