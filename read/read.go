@@ -6,9 +6,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	main "github.com/lutzpeschlow/nas_tools"
 )
 
-func (m *Model) ReadDat(filename string) error {
+func ReadDat(filename string, obj *main.Model) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		return err

@@ -44,7 +44,8 @@ func main() {
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
 	// read input file
-	err := mod.ReadDat("./regression_tests/sol_103_meter.dat")
+	dat_file := "./regression_tests/sol_103_meter.dat"
+	err := read.ReadDat(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
