@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	main "github.com/lutzpeschlow/nas_tools"
+	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
-func ReadDat(filename string, obj *main.Model) error {
+func ReadDat(filename string, obj *objects.Model) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -23,20 +23,20 @@ func ReadDat(filename string, obj *main.Model) error {
 		if strings.HasPrefix(line, "GRID") {
 			node, err := parseGRID(line)
 			if err == nil {
-				m.Nodes[node.ID] = node
+				obj.Nodes[node.ID] = node
 			}
 		}
 	}
 	return scanner.Err()
 }
 
-func parseGRID(line string) (*Node, error) {
+func parseGRID(line string) (*objects.Node, error) {
 	fields := strings.Fields(line)
 	if len(fields) < 4 {
 		return nil, fmt.Errorf("invalid GRID line: %s", line)
 	}
 
-	node := &Node{}
+	node := &objects.Node{}
 
 	fmt.Print(fields, "\n")
 

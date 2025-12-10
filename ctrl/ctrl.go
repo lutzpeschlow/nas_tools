@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
-)
 
-// control object
-type Control_Object struct {
-	Action string
-}
+	"github.com/lutzpeschlow/nas_tools/objects"
+)
 
 // ReadControlFile function to read a control file
 //
@@ -18,7 +15,7 @@ type Control_Object struct {
 //
 // output:
 //   - error: if read or parse fails, put back error, else nil
-func ReadControlFile(path string, obj *Control_Object, osName string) error {
+func ReadControlFile(path string, obj *objects.Control_Object, osName string) error {
 	// defaults
 	obj.Action = "READ"
 	// pointer to file for later opening, err as interface value
@@ -46,7 +43,7 @@ func ReadControlFile(path string, obj *Control_Object, osName string) error {
 	return scanner.Err()
 }
 
-func DebugPrintoutCtrlObj(obj *Control_Object) {
+func DebugPrintoutCtrlObj(obj *objects.Control_Object) {
 	fmt.Print("debug printout of control object: \n")
 	fmt.Print(" Action:    ", obj.Action, "\n")
 }

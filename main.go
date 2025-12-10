@@ -7,27 +7,12 @@ import (
 	"runtime"
 
 	"github.com/lutzpeschlow/nas_tools/ctrl"
+	"github.com/lutzpeschlow/nas_tools/objects"
+	"github.com/lutzpeschlow/nas_tools/read"
 )
 
-// Model object
-// as main object to save model data
-//
-//	Nodes - hash map with integer key
-type Model struct {
-	Nodes map[int]*Node
-}
-
-// Node object
-type Node struct {
-	ID      int
-	CP      int
-	X, Y, Z float64
-	CD      int
-	PS      int
-}
-
 func main() {
-	ctrl_obj := ctrl.Control_Object{}
+	ctrl_obj := objects.Control_Object{}
 	osName := runtime.GOOS
 	err_ctrl := ctrl.ReadControlFile("control.txt", &ctrl_obj, osName)
 	if err_ctrl != nil {
@@ -37,9 +22,9 @@ func main() {
 	ctrl.DebugPrintoutCtrlObj(&ctrl_obj)
 
 	// model instance
-	mod := &Model{}
+	mod := objects.Model{}
 	// create map with key: int and value: *Node
-	mod.Nodes = make(map[int]*Node)
+	mod.Nodes = make(map[int]*objects.Node)
 	// get current directory
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
