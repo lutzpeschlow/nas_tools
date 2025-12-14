@@ -163,3 +163,95 @@ func main() {
         fmt.Printf("Karte %d: %s\n", i+1, card)
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+func ReadNasCards(filename string, obj *objects.Model) error {
+    file, err := os.Open(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    // Map initialisieren, falls noch nil
+    if obj.NasCards == nil {
+        obj.NasCards = make(map[int]*objects.NasCard)
+    }
+
+    scanner := bufio.NewScanner(file)
+    var currentCard strings.Builder
+    cardCounter := 0
+
+    for scanner.Scan() {
+        line := strings.TrimSpace(scanner.Text())
+
+        // Kommentar-Zeilen überspringen ($)
+        if strings.HasPrefix(line, "$") {
+            continue
+        }
+
+        // Leere Zeilen = Kartentrenner
+        if line == "" {
+            if currentCard.Len() > 0 {
+                // fertige Karte in Slice zerlegen und ins Model schreiben
+                cardStr := strings.TrimSpace(currentCard.String())
+                fields := strings.Fields(cardStr)
+
+                obj.NasCards[cardCounter] = &objects.NasCard{
+                    card: fields,
+                }
+                cardCounter++
+
+                currentCard.Reset()
+            }
+            continue
+        }
+
+        // Karte anhängen (free format: + für continuation)
+        currentCard.WriteString(line + " ")
+
+        // Optional: Prüfe auf Continuation-Marker
+        if strings.HasSuffix(line, "+") {
+            continue // Nächste Zeile anhängen
+        }
+
+        // Karte fertig → speichern
+        cardStr := strings.TrimSpace(currentCard.String())
+        fields := strings.Fields(cardStr)
+
+        obj.NasCards[cardCounter] = &objects.NasCard{
+            card: fields,
+        }
+        cardCounter++
+
+        currentCard.Reset()
+    }
+
+    // Letzte Karte prüfen
+    if currentCard.Len() > 0 {
+        cardStr := strings.TrimSpace(currentCard.String())
+        fields := strings.Fields(cardStr)
+
+        obj.NasCards[cardCounter] = &objects.NasCard{
+            card: fields,
+        }
+    }
+
+    return scanner.Err()
+}

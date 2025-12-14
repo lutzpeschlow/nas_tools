@@ -25,22 +25,24 @@ func main() {
 	mod := objects.Model{}
 	// create map with key: int and value: *Node
 	mod.Nodes = make(map[int]*objects.Node)
+	mod.NasCards = make(map[int]*objects.NasCard)
+
 	// get current directory
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
 	// read input file
-	dat_file := "./regression_tests/sol_103_meter.dat"
-	err := read.ReadDat(dat_file, &mod)
+	dat_file := "./regression_tests/nast_card_test_00.dat"
+	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 	// number of nodes
-	fmt.Print("num nodes: ", len(mod.Nodes), "\n")
+	// fmt.Print("num nodes: ", len(mod.Nodes), "\n")
 	// node list
-	for id, node := range mod.Nodes {
-		if id < 5 {
-			fmt.Print("", node.ID, node.X, node.Y, node.Z, "\n")
-		}
-	}
+	// for id, node := range mod.Nodes {
+	//	if id < 5 {
+	//			fmt.Print("", node.ID, node.X, node.Y, node.Z, "\n")
+	//		}
+	//}
 }

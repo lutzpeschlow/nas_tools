@@ -10,6 +10,88 @@ import (
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
+func ReadNasCards(filename string, obj *objects.Model) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	if obj.NasCards == nil {
+		obj.NasCards = make(map[int]*objects.NasCard)
+	}
+
+	scanner := bufio.NewScanner(file)
+	var currentCard strings.Builder
+	card_counter := 0
+	parsingStarted := false
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if !parsingStarted {
+			if strings.EqualFold(line, "BEGIN BULK") {
+				parsingStarted = true
+			}
+			continue
+		}
+
+		// Kommentar-Zeilen überspringen ($)
+		if strings.HasPrefix(line, "$") {
+			continue
+		}
+
+		// Leere Zeilen = Kartentrenner
+		if line == "" {
+			if currentCard.Len() > 0 {
+				// fertige Karte in Slice zerlegen und ins Model schreiben
+				cardStr := strings.TrimSpace(currentCard.String())
+				fields := strings.Fields(cardStr)
+				fmt.Print(fields, "\n")
+
+				obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
+				card_counter++
+
+				currentCard.Reset()
+			}
+			continue
+		}
+
+		// Karte anhängen (free format: + für continuation)
+		currentCard.WriteString(line + " ")
+
+		// Optional: Prüfe auf Continuation-Marker
+		if strings.HasSuffix(line, "+") {
+			continue // Nächste Zeile anhängen
+		}
+
+		// Karte fertig → speichern
+		cardStr := strings.TrimSpace(currentCard.String())
+		fields := strings.Fields(cardStr)
+		fmt.Print(fields, "\n")
+
+		// obj.NasCards[card_counter] = &objects.NasCard{
+		// 	card: fields,
+		// }
+		card_counter++
+
+		currentCard.Reset()
+	}
+
+	// Letzte Karte prüfen
+	if currentCard.Len() > 0 {
+		cardStr := strings.TrimSpace(currentCard.String())
+		fields := strings.Fields(cardStr)
+		fmt.Print(fields, "\n")
+		// obj.NasCards[card_counter] = &objects.NasCard{
+		// 	card: fields,
+		// }
+	}
+
+	return scanner.Err()
+
+}
+
 func ReadDat(filename string, obj *objects.Model) error {
 	// open file, with defer as backup
 	file, err := os.Open(filename)
