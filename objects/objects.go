@@ -1,5 +1,11 @@
 package objects
 
+import (
+	"fmt"
+
+	"github.com/lutzpeschlow/nas_tools/objects"
+)
+
 // control object
 type Control_Object struct {
 	Action string
@@ -10,7 +16,6 @@ type Control_Object struct {
 //
 //	Nodes - hash map with integer key
 type Model struct {
-	Nodes    map[int]*Node
 	NasCards map[int]*NasCard
 }
 
@@ -19,11 +24,7 @@ type NasCard struct {
 	Card []string
 }
 
-// Node object
-type Node struct {
-	ID      int
-	CP      int
-	X, Y, Z float64
-	CD      int
-	PS      int
+func DebugPrintoutModelObj(obj *objects.Model) {
+	fmt.Print("debug printout of control object: \n")
+	fmt.Print(" Action:    ", obj.NasCards, "\n")
 }

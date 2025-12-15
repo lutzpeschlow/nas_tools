@@ -23,10 +23,8 @@ func main() {
 
 	// model instance
 	mod := objects.Model{}
-	// create map with key: int and value: *Node
-	mod.Nodes = make(map[int]*objects.Node)
+	// create map with key: int and value: *NasCard
 	mod.NasCards = make(map[int]*objects.NasCard)
-
 	// get current directory
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
@@ -37,12 +35,4 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-	// number of nodes
-	// fmt.Print("num nodes: ", len(mod.Nodes), "\n")
-	// node list
-	// for id, node := range mod.Nodes {
-	//	if id < 5 {
-	//			fmt.Print("", node.ID, node.X, node.Y, node.Z, "\n")
-	//		}
-	//}
 }
