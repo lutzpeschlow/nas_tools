@@ -1,11 +1,5 @@
 package objects
 
-import (
-	"fmt"
-
-	"github.com/lutzpeschlow/nas_tools/objects"
-)
-
 // control object
 type Control_Object struct {
 	Action string
@@ -22,9 +16,4 @@ type Model struct {
 // NasCard object
 type NasCard struct {
 	Card []string
-}
-
-func DebugPrintoutModelObj(obj *objects.Model) {
-	fmt.Print("debug printout of control object: \n")
-	fmt.Print(" Action:    ", obj.NasCards, "\n")
 }

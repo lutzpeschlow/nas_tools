@@ -17,16 +17,14 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		return err
 	}
 	defer file.Close()
-
-	// if obj.NasCards == nil {
-	// 	obj.NasCards = make(map[int]*objects.NasCard)
-	// }
-
 	// scan object, str.Builder object and further variables
 	scanner := bufio.NewScanner(file)
-	var currentCard strings.Builder
+	var currentCard []string
 	card_counter := 0
 	parsingStarted := false
+	var first_sign byte
+
+	// extract each card in separate block
 	// loop
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -42,36 +40,59 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 			continue
 		}
 
-		// Leere Zeilen = Kartentrenner
-		if line == "" {
-			if currentCard.Len() > 0 {
-				// fertige Karte in Slice zerlegen und ins Model schreiben
-				cardStr := strings.TrimSpace(currentCard.String())
-				fields := strings.Fields(cardStr)
-				obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
-				card_counter++
-				currentCard.Reset()
+		if len(line) == 0 {
+			first_sign = '-'
+		} else {
+			first_sign = line[0]
+		}
+
+		// first is a letter, new card alert, write existing buffer in object
+		if (first_sign >= 'a' && first_sign <= 'z') || (first_sign >= 'A' && first_sign <= 'Z') {
+			if len(currentCard) > 0 {
+				// write existing card into NasCards and clean up currentCard
+				fmt.Print("write card into objects ...", card_counter, " - ", len(currentCard), "\n")
+				obj.NasCards[card_counter] = &objects.NasCard{Card: currentCard}
+				card_counter = card_counter + 1
+
+				currentCard = currentCard[:0]
+			} else {
+				fmt.Print("new or append ... \n")
+				currentCard = append(currentCard, line)
+				fmt.Print(currentCard, "\n")
 			}
-			continue
+
 		}
-		// Karte anhängen (free format: + für continuation)
-		currentCard.WriteString(line + " ")
+
+		// Leere Zeilen = Kartentrenner
+		// if line == "" {
+		// 	if currentCard.Len() > 0 {
+
+		//		cardStr := strings.TrimSpace(currentCard.String())
+		//		fields := strings.Fields(cardStr)
+		//		obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
+		//		card_counter++
+		//		currentCard.Reset()
+		//	}
+		//	continue
+		//}
+
+		//currentCard.WriteString(line + " ")
 		// Optional: Prüfe auf Continuation-Marker
-		if strings.HasSuffix(line, "+") {
-			continue // Nächste Zeile anhängen
-		}
+		// if strings.HasSuffix(line, "+") {
+		// 	continue // Nächste Zeile anhängen
+		//}
 		// Karte fertig → speichern
-		cardStr := strings.TrimSpace(currentCard.String())
-		fields := strings.Fields(cardStr)
-		obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
-		card_counter++
-		currentCard.Reset()
+		// cardStr := strings.TrimSpace(currentCard.String())
+		// fields := strings.Fields(cardStr)
+		// obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
+		// card_counter++
+		// currentCard.Reset()
 	}
 	// Letzte Karte prüfen
-	if currentCard.Len() > 0 {
-		cardStr := strings.TrimSpace(currentCard.String())
-		fields := strings.Fields(cardStr)
-		obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
-	}
+	// if currentCard.Len() > 0 {
+	// 	cardStr := strings.TrimSpace(currentCard.String())
+	// 	fields := strings.Fields(cardStr)
+	// 	obj.NasCards[card_counter] = &objects.NasCard{Card: fields}
+	// }
 	return scanner.Err()
 }
