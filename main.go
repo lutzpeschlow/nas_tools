@@ -53,7 +53,7 @@ func main() {
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
 	// read input file
-	dat_file := "./regression_tests/nast_card_test_tiny.dat"
+	dat_file := "./regression_tests/nast_card_test_short.dat"
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)

@@ -10,7 +10,7 @@ import (
 )
 
 func ReadNasCards(filename string, obj *objects.Model) error {
-	fmt.Print("read nastran cards ............................................ \n")
+	fmt.Print("read nastran cards ................................................ \n")
 	// get file object and close with defer
 	file, err := os.Open(filename)
 	if err != nil {
@@ -20,7 +20,7 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	// scan object, str.Builder object and further variables
 	scanner := bufio.NewScanner(file)
 	var currentCard []string
-	card_counter := 0
+	// card_counter := 0
 	parsingStarted := false
 	inCard := false
 	var first_sign byte
@@ -39,18 +39,19 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		}
 
 		if parsingStarted {
-			fmt.Print(line, "\n")
+			fmt.Print(line, currentCard, "\n")
 		}
 
 		// COMMENT - direct jump
 		if strings.HasPrefix(line, "$") {
+			fmt.Print("COMM: ", line, currentCard, "\n")
 			continue
 		}
 
 		// ENDDATA - finisch, last current card should be saved before exit
 		if strings.HasPrefix(line, "ENDDATA") {
 			fmt.Print("found enddata ... \n")
-			obj.NasCards[card_counter] = &objects.NasCard{Card: currentCard}
+			// obj.NasCards[card_counter] = &objects.NasCard{Card: currentCard}
 			continue
 		}
 
@@ -61,30 +62,40 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 			first_sign = line[0]
 		}
 
-		// CARD - first is a letter, new card alert, write existing buffer in object
+		// CARD - first is a letter, new card alert
+		// write existing buffer in object and setup for new card
 		if (first_sign >= 'a' && first_sign <= 'z') || (first_sign >= 'A' && first_sign <= 'Z') {
+			// there is content in current card that needs to be saved
 			if len(currentCard) > 0 {
 				// write existing card into NasCards and clean up currentCard
-
-				obj.NasCards[card_counter] = &objects.NasCard{Card: currentCard}
-				card_counter = card_counter + 1
-				fmt.Print(" into obj: ", currentCard, "\n")
-				// content
-				fmt.Print("--- content --- \n")
-				for id, card := range obj.NasCards {
-					fmt.Printf("ID %d: %+v\n", id, card)
+				nextID := len(obj.NasCards)
+				obj.NasCards[nextID] = &objects.NasCard{
+					Card: append([]string(nil), currentCard...),
 				}
 
+				fmt.Print(" into obj: ", currentCard, nextID, "\n")
+				// content
+				fmt.Print("    --- content --- \n")
+				for id, card := range obj.NasCards {
+					fmt.Printf("   ID %d: %+v\n", id, card)
+				}
 				currentCard = currentCard[:0]
+				currentCard = append(currentCard, line)
+				fmt.Print(" new: ", currentCard, " - ", len(currentCard), "\n")
+				inCard = true
+				// no content in current card, simply add line
 			} else {
 				currentCard = append(currentCard, line)
-				fmt.Print(" new or append: ", currentCard, " - ", len(currentCard), "\n")
+				fmt.Print(" new: ", currentCard, " - ", len(currentCard), "\n")
 				inCard = true
 			}
 			// end block - CARD
 		} else {
-			// CONT - any continuation line should be added to the current card
-			currentCard = append(currentCard, line)
+			if inCard {
+				// CONT - any continuation line should be added to the current card
+				currentCard = append(currentCard, line)
+			}
+
 		}
 
 	}
