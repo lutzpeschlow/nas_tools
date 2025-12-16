@@ -5,32 +5,12 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"sort"
 
 	"github.com/lutzpeschlow/nas_tools/ctrl"
+	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
 )
-
-func DebugPrintoutModelObj(obj *objects.Model) {
-
-	fmt.Print("debug printout of control object: \n")
-
-	keys := make([]int, 0, len(obj.NasCards))
-	for id := range obj.NasCards {
-		keys = append(keys, id)
-	}
-	sort.Ints(keys)
-
-	for _, id := range keys {
-		card := obj.NasCards[id]
-		fmt.Print(id, len(card.Card), card.Card, "\n")
-		// for index, value := range card.Card {
-		// 	fmt.Printf("  [%d] %s\n", index, value)
-		// }
-	}
-
-}
 
 // ============================================================================
 // === main ===
@@ -60,6 +40,10 @@ func main() {
 		return
 	}
 
-	DebugPrintoutModelObj(&mod)
+	// debug printout
+	debug.DebugPrintoutModelObj(&mod)
+
+	// write content file
+	// write.WriteNasCards("result.txt", &mod)
 
 }
