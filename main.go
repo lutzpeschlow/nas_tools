@@ -10,6 +10,7 @@ import (
 	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
+	"github.com/lutzpeschlow/nas_tools/write"
 )
 
 // ============================================================================
@@ -44,6 +45,34 @@ func main() {
 	debug.DebugPrintoutModelObj(&mod)
 
 	// write content file
-	// write.WriteNasCards("result.txt", &mod)
+	write.WriteNasCards("result.txt", &mod)
 
 }
+
+// func extractCardName(line string) string {
+//     // Nastran: Erste 8 Zeichen als Kartenname
+//     if len(line) < 8 {
+//         return ""
+//     }
+//     name := strings.TrimSpace(line[:8])
+//
+//     // Entferne + * , am Ende
+//     name = strings.TrimRight(name, "+*, ")
+//
+//     // Zu Großbuchstaben
+//     return strings.ToUpper(name)
+// }
+// func (m *Model) FillStats() {
+//     m.NasCardStats = make(map[string]int)
+//
+//     for _, card := range m.NasCards {
+//         for _, line := range card.Card {
+//             if len(line) == 0 { continue }
+//
+//             cardType := extractCardName(line)
+//             if cardType != "" {
+//                 m.NasCardStats[cardType]++
+//             }
+//         }
+//     }
+// }

@@ -9,6 +9,7 @@ import (
 )
 
 func WriteNasCards(filename string, obj *objects.Model) error {
+	fmt.Print("write nas cards into file ...")
 	// assign file and get file object
 	f, err := os.Create(filename)
 	if err != nil {

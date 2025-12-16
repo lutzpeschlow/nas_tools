@@ -10,7 +10,8 @@ type Control_Object struct {
 //
 //	Nodes - hash map with integer key
 type Model struct {
-	NasCards map[int]*NasCard
+	NasCards     map[int]*NasCard
+	NasCardStats map[string]int
 }
 
 // NasCard object
