@@ -45,5 +45,7 @@ func DebugPrintoutNasCardStats(obj *objects.Model) {
 		fmt.Printf("%-*s: %d\n", maxLen, typ, count)
 		total += count
 	}
+	fmt.Print("-----------\n")
 	fmt.Printf("%-*s: %d\n", maxLen, "TOTAL", total)
+	fmt.Print("===========\n")
 }

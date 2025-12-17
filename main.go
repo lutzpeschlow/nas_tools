@@ -7,9 +7,9 @@ import (
 	"runtime"
 
 	"github.com/lutzpeschlow/nas_tools/ctrl"
-	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
+	"github.com/lutzpeschlow/nas_tools/write"
 )
 
 // ============================================================================
@@ -33,7 +33,8 @@ func main() {
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
 	// read input file
-	dat_file := "./regression_tests/nast_card_test_short.dat"
+	dat_file := "./regression_tests/s111.exp"
+	// dat_file := "./regression_tests/nast_card_test_01.dat"
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
@@ -46,8 +47,9 @@ func main() {
 	// write.WriteNasCards("result.txt", &mod)
 
 	// card statistics
-	read.GetNasCardsStatistics(&mod)
+	// read.GetNasCardsStatistics(&mod)
+	// debug.DebugPrintoutNasCardStats(&mod)
 
-	debug.DebugPrintoutNasCardStats(&mod)
+	write.WriteCardsToFiles(&mod)
 
 }

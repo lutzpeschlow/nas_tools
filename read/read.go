@@ -9,6 +9,12 @@ import (
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
+// function: ReadNasCards
+//
+// description:
+//
+// input :  file name,  model object
+// output : error/return value
 func ReadNasCards(filename string, obj *objects.Model) error {
 	fmt.Print("read nastran cards ... \n")
 	// get file object and close with defer
@@ -89,18 +95,24 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	return scanner.Err()
 }
 
+// function: GetNasCardsStatistics
+//
+// description:
+//
+// input : model object
+// output : error/return value
 func GetNasCardsStatistics(obj *objects.Model) error {
+	//
 	obj.NasCardStats = make(map[string]int)
-
+	// loop through all cards
 	for _, card := range obj.NasCards {
 		if len(card.Card) == 0 {
 			continue
 		}
-
-		// Erste Zeile der Karte enthält Kartennamen
+		// first line of card
 		firstLine := card.Card[0]
-		cardType := extractCardName(firstLine)
-
+		cardType := ExtractCardName(firstLine)
+		// add counter to according card in the statistics object
 		if cardType != "" {
 			obj.NasCardStats[cardType]++
 		}
@@ -108,7 +120,13 @@ func GetNasCardsStatistics(obj *objects.Model) error {
 	return nil
 }
 
-func extractCardName(line string) string {
+// function: extractCardName
+//
+// description:
+//
+// input : string
+// output : string
+func ExtractCardName(line string) string {
 	if len(line) < 4 {
 		return ""
 	}
