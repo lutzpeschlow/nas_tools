@@ -89,8 +89,70 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	return scanner.Err()
 }
 
+func GetNasCardsStatistics(obj *objects.Model) error {
+	obj.NasCardStats = make(map[string]int)
+
+	for _, card := range obj.NasCards {
+		if len(card.Card) == 0 {
+			continue
+		}
+
+		// Erste Zeile der Karte enthält Kartennamen
+		firstLine := card.Card[0]
+		cardType := extractCardName(firstLine)
+
+		if cardType != "" {
+			obj.NasCardStats[cardType]++
+		}
+	}
+	return nil
+}
+
+func extractCardName(line string) string {
+	if len(line) < 4 {
+		return ""
+	}
+	name := strings.TrimSpace(line[:8])
+	sepIndex := strings.IndexAny(name, ",+ *")
+
+	if sepIndex > 0 {
+		name = name[:sepIndex] // Bis zum Trennzeichen abschneiden
+	}
+
+	return strings.ToUpper(strings.TrimSpace(name))
+
+}
+
 // content
 //fmt.Print("    --- content --- \n")
 //for id, card := range obj.NasCards {
 //	fmt.Printf("   ID %d: %+v\n", id, card)
 //}
+
+// func extractCardName(line string) string {
+//     // Nastran: Erste 8 Zeichen als Kartenname
+//     if len(line) < 8 {
+//         return ""
+//     }
+//     name := strings.TrimSpace(line[:8])
+//
+//     // Entferne + * , am Ende
+//     name = strings.TrimRight(name, "+*, ")
+//
+//     // Zu Großbuchstaben
+//     return strings.ToUpper(name)
+// }
+// func (m *Model) FillStats() {
+//     m.NasCardStats = make(map[string]int)
+//
+//     for _, card := range m.NasCards {
+//         for _, line := range card.Card {
+//             if len(line) == 0 { continue }
+//
+//             cardType := extractCardName(line)
+//             if cardType != "" {
+//                 m.NasCardStats[cardType]++
+//             }
+//         }
+//     }
+// }
