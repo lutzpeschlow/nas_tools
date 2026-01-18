@@ -3,6 +3,13 @@ package objects
 // control object
 type Control_Object struct {
 	Action string
+	InputFile string
+	InputDir string
+	OutputFile string
+	OutputDir string
+	Option01 string
+	// 
+	FullInputPath string
 }
 
 // Model object

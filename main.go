@@ -32,8 +32,12 @@ func main() {
 	// get current directory
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
+	//
 	// read input file
-	dat_file := "./regression_tests/s111.exp"
+	// dat_file := "./regression_tests/split_test_01.dat"
+	// get_dat file name from ctrl object
+	dat_file = ctrl_obj.FullInputPath
+	fmt.Println("     ", dat_file)
 	// dat_file := "./regression_tests/nast_card_test_01.dat"
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
@@ -44,12 +48,12 @@ func main() {
 	// debug printout
 	// debug.DebugPrintoutModelObj(&mod)
 	// write content file
-	// write.WriteNasCards("result.txt", &mod)
+	write.WriteNasCards("result.txt", &mod)
 
 	// card statistics
 	// read.GetNasCardsStatistics(&mod)
 	// debug.DebugPrintoutNasCardStats(&mod)
 
-	write.WriteCardsToFiles(&mod)
+	// write.WriteCardsToFiles(&mod)
 
 }

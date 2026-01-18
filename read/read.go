@@ -27,7 +27,10 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	scanner := bufio.NewScanner(file)
 	var currentCard []string
 	// card_counter := 0
-	parsingStarted := false
+	// use false if considering BEGIN BULK
+	// parsingStarted := false
+	parsingStarted := true
+	_ = parsingStarted
 	inCard := false
 	var first_sign byte
 
@@ -38,12 +41,12 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		// line := strings.TrimSpace(scanner.Text())
 		line := scanner.Text()
 		// check   begin bulk  and use continue for next step
-		if !parsingStarted {
-			if strings.EqualFold(line, "BEGIN BULK") {
-				parsingStarted = true
-			}
-			continue
-		}
+		// if !parsingStarted {
+		// 	if strings.EqualFold(line, "BEGIN BULK") {
+		// 		parsingStarted = true
+		// 	}
+		// 	continue
+		// }
 
 		// COMMENT - direct jump
 		if strings.HasPrefix(line, "$") {
