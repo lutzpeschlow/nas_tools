@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
@@ -50,26 +50,35 @@ func ReadControlFile(path string, obj *objects.Control_Object, osName string) er
 			}
 		}
 	}
-	//
+	// full input path
 	if obj.InputDir != "" && obj.InputFile != "" {
-        obj.FullInputPath = filepath.Join(obj.InputDir, obj.InputFile)
-    } else if obj.InputFile != "" {
-        obj.FullInputPath = obj.InputFile  
-    } else if obj.InputDir != "" {
-        obj.FullInputPath = obj.InputDir   
-    }
+		obj.FullInputPath = filepath.Join(obj.InputDir, obj.InputFile)
+	} else if obj.InputFile != "" {
+		obj.FullInputPath = obj.InputFile
+	} else if obj.InputDir != "" {
+		obj.FullInputPath = obj.InputDir
+	}
+	// full output path
+	if obj.OutputDir != "" && obj.OutputFile != "" {
+		obj.FullOutputPath = filepath.Join(obj.OutputDir, obj.OutputFile)
+	} else if obj.OutputFile != "" {
+		obj.FullOutputPath = obj.OutputFile
+	} else if obj.OutputDir != "" {
+		obj.FullOutputPath = obj.OutputDir
+	}
 	// return value is the error interface value of the scanner
 	return scanner.Err()
 }
 
 func DebugPrintoutCtrlObj(obj *objects.Control_Object) {
 	fmt.Print("debug printout of control object: \n")
-	fmt.Print("  Action:       ", obj.Action, "\n")
-	fmt.Print("  InputFile:    ", obj.InputFile, "\n")
-	fmt.Print("  InputDir:     ", obj.InputDir, "\n")
-	fmt.Print("  OutputFile:   ", obj.OutputFile, "\n")
-	fmt.Print("  OutputDir:    ", obj.OutputDir, "\n")
-	fmt.Print("  Option01:     ", obj.Option01, "\n")
-	fmt.Print("     FullInputPath::     ", obj.FullInputPath, "\n")
+	fmt.Print("   Action:       ", obj.Action, "\n")
+	fmt.Print("   InputFile:    ", obj.InputFile, "\n")
+	fmt.Print("   InputDir:     ", obj.InputDir, "\n")
+	fmt.Print("   OutputFile:   ", obj.OutputFile, "\n")
+	fmt.Print("   OutputDir:    ", obj.OutputDir, "\n")
+	fmt.Print("   Option01:     ", obj.Option01, "\n")
+	fmt.Print("      FullInputPath::     ", obj.FullInputPath, "\n")
+	fmt.Print("      FullOutpuPath::     ", obj.FullOutputPath, "\n")
 
 }

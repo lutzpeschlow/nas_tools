@@ -16,7 +16,7 @@ import (
 // input :  file name,  model object
 // output : error/return value
 func ReadNasCards(filename string, obj *objects.Model) error {
-	fmt.Print("read nastran cards ... \n")
+	fmt.Println("read nastran cards: ", filename)
 	// get file object and close with defer
 	file, err := os.Open(filename)
 	if err != nil {
@@ -53,14 +53,14 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 			continue
 		}
 
-		// ENDDATA - finisch, last current card should be saved before exit
-		if strings.HasPrefix(line, "ENDDATA") {
-			fmt.Print("found enddata, save last card ... \n")
-			// write existing card into NasCards
-			nextID := len(obj.NasCards)
-			obj.NasCards[nextID] = &objects.NasCard{Card: append([]string(nil), currentCard...)}
-			continue
-		}
+		// ENDDATA - finish, last current card should be saved before exit
+		// if strings.HasPrefix(line, "ENDDATA") {
+		// 	fmt.Print("found enddata, save last card ... \n")
+		// 	// write existing card into NasCards
+		// 	nextID := len(obj.NasCards)
+		// 	obj.NasCards[nextID] = &objects.NasCard{Card: append([]string(nil), currentCard...)}
+		// 	continue
+		// }
 
 		// check first sign of line
 		if len(line) == 0 {

@@ -12,13 +12,15 @@ import (
 )
 
 func WriteNasCards(filename string, obj *objects.Model) error {
-	fmt.Print("write nas cards into file ...")
+	fmt.Print("write nas cards into file: ", filename, "\n")
 	// assign file and get file object
 	f, err := os.Create(filename)
 	if err != nil {
 		return fmt.Errorf("ERROR: %w", err)
 	}
 	defer f.Close()
+	//
+	fmt.Println("   write: ", filename)
 	// sort keys of map
 	keys := make([]int, 0, len(obj.NasCards))
 	for id := range obj.NasCards {

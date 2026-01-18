@@ -6,10 +6,10 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/lutzpeschlow/nas_tools/cmd"
 	"github.com/lutzpeschlow/nas_tools/ctrl"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
-	"github.com/lutzpeschlow/nas_tools/write"
 )
 
 // ============================================================================
@@ -34,26 +34,31 @@ func main() {
 	fmt.Println("current directory:", current_dir)
 	//
 	// read input file
-	// dat_file := "./regression_tests/split_test_01.dat"
-	// get_dat file name from ctrl object
-	dat_file = ctrl_obj.FullInputPath
-	fmt.Println("     ", dat_file)
-	// dat_file := "./regression_tests/nast_card_test_01.dat"
+	dat_file := ctrl_obj.FullInputPath
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	// debug printout
-	// debug.DebugPrintoutModelObj(&mod)
-	// write content file
-	write.WriteNasCards("result.txt", &mod)
+	if err := cmd.ExecuteAction(&ctrl_obj, &mod); err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
 
-	// card statistics
-	// read.GetNasCardsStatistics(&mod)
-	// debug.DebugPrintoutNasCardStats(&mod)
-
-	// write.WriteCardsToFiles(&mod)
+	// // write content file
+	// if ctrl_obj.Action == "READ" {
+	// 	write.WriteNasCards(ctrl_obj.OutputFile, &mod)
+	// }
+	// // card statistics
+	// if ctrl_obj.Action == "STATS" {
+	// 	read.GetNasCardsStatistics(&mod)
+	// 	debug.DebugPrintoutNasCardStats(&mod)
+	// }
+	// // split file
+	// if ctrl_obj.Action == "SPLIT" {
+	// 	write.WriteCardsToFiles(&mod)
+	// }
+	//
 
 }

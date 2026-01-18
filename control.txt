@@ -1,4 +1,4 @@
-ACTION READ
+ACTION STATS 
 INPUT_FILE split_test_01.dat
 INPUT_DIR regression_tests
 OUTPUT_FILE result.txt

@@ -2,14 +2,15 @@ package objects
 
 // control object
 type Control_Object struct {
-	Action string
-	InputFile string
-	InputDir string
+	Action     string
+	InputFile  string
+	InputDir   string
 	OutputFile string
-	OutputDir string
-	Option01 string
-	// 
-	FullInputPath string
+	OutputDir  string
+	Option01   string
+	//
+	FullInputPath  string
+	FullOutputPath string
 }
 
 // Model object
