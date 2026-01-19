@@ -53,6 +53,13 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 			continue
 		}
 
+		// last lines in test file:
+		// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+		// GRID       37244              0.      0.      0.
+		// GRID     4000002              0.      0.      0.
+		// !!!
+		// missing: GRID     4000002              0.      0.      0.
+
 		// ENDDATA - finish, last current card should be saved before exit
 		// if strings.HasPrefix(line, "ENDDATA") {
 		// 	fmt.Print("found enddata, save last card ... \n")
@@ -74,10 +81,15 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		if (first_sign >= 'a' && first_sign <= 'z') || (first_sign >= 'A' && first_sign <= 'Z') {
 			// there is content in current card that needs to be saved
 			if len(currentCard) > 0 {
-				// write existing card into NasCards
+				// write existing card into NasCards and NasCardList
 				// create new string slice, initialize nil, add content
 				nextID := len(obj.NasCards)
-				obj.NasCards[nextID] = &objects.NasCard{Card: append([]string(nil), currentCard...)}
+				newCard := &objects.NasCard{Card: append([]string(nil), currentCard...)}
+				// put new card into map
+				obj.NasCards[nextID] = newCard
+				// put new card into list (keeps order)
+				obj.NasCardList = append(obj.NasCardList, newCard)
+				//
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
@@ -95,6 +107,15 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 			}
 		}
 	}
+
+	// last line in buffer ...
+	if len(currentCard) > 0 {
+		nextID := len(obj.NasCards)
+		newCard := &objects.NasCard{Card: append([]string(nil), currentCard...)}
+		obj.NasCards[nextID] = newCard
+		obj.NasCardList = append(obj.NasCardList, newCard)
+	}
+	// return scanner error
 	return scanner.Err()
 }
 

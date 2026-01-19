@@ -19,6 +19,7 @@ type Control_Object struct {
 //	Nodes - hash map with integer key
 type Model struct {
 	NasCards     map[int]*NasCard
+	NasCardList  []*NasCard
 	NasCardStats map[string]int
 }
 

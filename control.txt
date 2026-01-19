@@ -1,5 +1,5 @@
-ACTION STATS 
-INPUT_FILE split_test_01.dat
+ACTION SPLIT
+INPUT_FILE split_test_small.dat
 INPUT_DIR regression_tests
 OUTPUT_FILE result.txt
 OUTPUT_DIR result_dir

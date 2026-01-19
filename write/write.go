@@ -42,6 +42,19 @@ func WriteNasCards(filename string, obj *objects.Model) error {
 	return nil
 }
 
+//
+// !!!
+// proposal for using nascardlist
+// !!!
+//
+// cardTypes := make(map[string][][]string)
+// for _, card := range obj.NasCardList {  // ← Slice statt Map
+//     if len(card.Card) == 0 { continue }
+//     firstLine := card.Card[0]
+//     cardType := read.ExtractCardName(firstLine)
+//     cardTypes[cardType] = append(cardTypes[cardType], card.Card)
+// }
+
 func WriteCardsToFiles(obj *objects.Model) error {
 	//
 	dir := "./split_dir"
