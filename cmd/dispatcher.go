@@ -18,7 +18,7 @@ func ExecuteAction(ctrl_obj *objects.Control_Object, mod *objects.Model) error {
 		debug.DebugPrintoutNasCardStats(mod)
 		return nil
 	case "SPLIT":
-		return write.WriteCardsToFiles(mod)
+		return write.WriteCardsToFiles(ctrl_obj.OutputDir, mod)
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl_obj.Action)
 	}
