@@ -46,19 +46,4 @@ func main() {
 		os.Exit(1)
 	}
 
-	// // write content file
-	// if ctrl_obj.Action == "READ" {
-	// 	write.WriteNasCards(ctrl_obj.OutputFile, &mod)
-	// }
-	// // card statistics
-	// if ctrl_obj.Action == "STATS" {
-	// 	read.GetNasCardsStatistics(&mod)
-	// 	debug.DebugPrintoutNasCardStats(&mod)
-	// }
-	// // split file
-	// if ctrl_obj.Action == "SPLIT" {
-	// 	write.WriteCardsToFiles(&mod)
-	// }
-	//
-
 }

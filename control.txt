@@ -1,6 +1,6 @@
-ACTION SPLIT
-INPUT_FILE split_test_small.dat
+ACTION EXTRACT_ACC_LIST
+INPUT_FILE reg_test_01.dat
 INPUT_DIR regression_tests
 OUTPUT_FILE result.txt
 OUTPUT_DIR result_dir
-OPTION_01 OPTION
+OPTION_01 NOD

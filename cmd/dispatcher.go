@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/lutzpeschlow/nas_tools/debug"
+	"github.com/lutzpeschlow/nas_tools/modify"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
 	"github.com/lutzpeschlow/nas_tools/write"
@@ -19,6 +20,9 @@ func ExecuteAction(ctrl_obj *objects.Control_Object, mod *objects.Model) error {
 		return nil
 	case "SPLIT":
 		return write.WriteCardsToFiles(ctrl_obj.OutputDir, mod)
+	case "EXTRACT_ACC_LIST":
+		return modify.ExtractCardsAccordingList(ctrl_obj, mod)
+
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl_obj.Action)
 	}
