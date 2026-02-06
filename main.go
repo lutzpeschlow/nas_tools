@@ -16,14 +16,15 @@ import (
 // === main ===
 // ============================================================================
 func main() {
-	ctrl_obj := objects.Control_Object{}
+	// ctrl_obj := objects.Control_Object{}
+	config_obj := objects.Config{}
 	osName := runtime.GOOS
-	err_ctrl := ctrl.ReadControlFile("control.txt", &ctrl_obj, osName)
+	err_ctrl := ctrl.ReadControlJsonFile("control.json", &config_obj, osName)
 	if err_ctrl != nil {
 		fmt.Printf(" %v\n", err_ctrl)
 		os.Exit(1)
 	}
-	ctrl.DebugPrintoutCtrlObj(&ctrl_obj)
+	// ctrl.DebugPrintoutCtrlObj(&ctrl_obj)
 
 	// model instance
 	mod := objects.Model{}
@@ -34,14 +35,15 @@ func main() {
 	fmt.Println("current directory:", current_dir)
 	//
 	// read input file
-	dat_file := ctrl_obj.FullInputPath
+	dat_file := config_obj.FullInputPath
+
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-
-	if err := cmd.ExecuteAction(&ctrl_obj, &mod); err != nil {
+	//
+	if err := cmd.ExecuteAction(&config_obj, &mod); err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}

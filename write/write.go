@@ -11,11 +11,19 @@ import (
 	"github.com/lutzpeschlow/nas_tools/read"
 )
 
-func WriteNasCards(filename string, obj *objects.Model) error {
+func WriteNasCards(config *objects.Config, obj *objects.Model) error {
+	// interface value
+	fmt.Println(config.Actions)
+	filename_val := config.Actions["output_file"]
+	fmt.Println(" value: ", filename_val)
+	// convert to string
+	filename, _ := filename_val.(string)
+	//
 	fmt.Print("write nas cards into file: ", filename, "\n")
 	// assign file and get file object
 	f, err := os.Create(filename)
 	if err != nil {
+		fmt.Println("... write file problems ")
 		return fmt.Errorf("ERROR: %w", err)
 	}
 	defer f.Close()

@@ -1,0 +1,27 @@
+{
+  "enable": {
+    "READ": true,
+    "STATS": false,
+    "SPLIT": false,
+    "EXTRACT_ACC_LIST": false
+  },
+  "defaults": {
+    "input_file": "reg_test_01.dat",
+    "input_dir": "regression_tests"
+  },
+  "actions": {
+    "READ": {
+      "output_file": "result.txt"
+    },
+    "STATS": {},
+    "SPLIT": {
+      "output_dir": "result_dir"
+    },
+    "EXTRACT_ACC_LIST": {
+      "output_file": "result.txt",
+      "output_dir": "result_dir",
+      "option_01": "NOD",
+      "input_01": "node_list.txt"
+    }
+  }
+}

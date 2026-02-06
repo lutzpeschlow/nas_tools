@@ -20,6 +20,7 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	// get file object and close with defer
 	file, err := os.Open(filename)
 	if err != nil {
+		fmt.Println("... problem reading file: ", filename)
 		return err
 	}
 	defer file.Close()
@@ -33,12 +34,14 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 	_ = parsingStarted
 	inCard := false
 	var first_sign byte
+	lineCount := 0
 
 	// extract each card in separate block
 	// loop
 	for scanner.Scan() {
 		// trim line
 		// line := strings.TrimSpace(scanner.Text())
+		lineCount = lineCount + 1
 		line := scanner.Text()
 		// check   begin bulk  and use continue for next step
 		// if !parsingStarted {
@@ -115,6 +118,8 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		obj.NasCards[nextID] = newCard
 		obj.NasCardList = append(obj.NasCardList, newCard)
 	}
+	//
+	fmt.Println(lineCount)
 	// return scanner error
 	return scanner.Err()
 }

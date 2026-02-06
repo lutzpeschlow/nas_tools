@@ -2,13 +2,79 @@ package ctrl
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
+
+func ReadControlJsonFile(path string, obj *objects.Config, osName string) error {
+	// read json control file
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal("Error reading config file:", err)
+	}
+	if err := json.Unmarshal(data, &obj); err != nil {
+		log.Fatal("Error parsing JSON:", err)
+	}
+	fmt.Print("... scanning control json file  \n")
+	// loop through enabled actions
+	for actionName, enabled := range obj.Enable {
+		if !enabled {
+			continue
+		}
+		fmt.Printf("ACTION: '%s' \n", actionName)
+		// create map with key as integer but with flexible values - interface
+		actionParams := map[string]interface{}{}
+		// definition of input file and input dir
+		actionParams["input_file"] = obj.Defaults.InputFile
+		actionParams["input_dir"] = obj.Defaults.InputDir
+		// further parameters
+		actionData, exists := obj.Actions[actionName]
+		fmt.Println(actionData, " - ", exists)
+		//
+		for k, v := range actionData.(map[string]interface{}) {
+			actionParams[k] = v
+		}
+		// full input path
+		if obj.Defaults.InputDir != "" && obj.Defaults.InputFile != "" {
+			obj.FullInputPath = filepath.Join(obj.Defaults.InputDir, obj.Defaults.InputFile)
+		} else if obj.Defaults.InputFile != "" {
+			obj.FullInputPath = obj.Defaults.InputFile
+		} else if obj.Defaults.InputDir != "" {
+			obj.FullInputPath = obj.Defaults.InputDir
+		}
+		// full output path
+		//   output dir
+		outputDir := ""
+		if val, exists := actionParams["output_dir"]; exists {
+			if dirStr, ok := val.(string); ok {
+				outputDir = dirStr
+			}
+		}
+		//    output file
+		outputFile := ""
+		if val, exists := actionParams["output_file"]; exists {
+			if fileStr, ok := val.(string); ok {
+				outputFile = fileStr
+			}
+		}
+		// build full path from both - dir and file
+		if outputDir != "" && outputFile != "" {
+			obj.FullOutputPath = filepath.Join(outputDir, outputFile)
+		} else if outputFile != "" {
+			obj.FullOutputPath = outputFile
+		} else if outputDir != "" {
+			obj.FullOutputPath = outputDir
+		}
+
+	}
+	return err
+}
 
 // ReadControlFile function to read a control file
 //

@@ -13,6 +13,18 @@ type Control_Object struct {
 	FullOutputPath string
 }
 
+type Config struct {
+	Enable   map[string]bool `json:"enable"`
+	Defaults struct {
+		InputFile string `json:"input_file"`
+		InputDir  string `json:"input_dir"`
+	} `json:"defaults"`
+	Actions        map[string]interface{} `json:"actions"`
+	Action         string
+	FullInputPath  string
+	FullOutputPath string
+}
+
 // Model object
 // as main object to save model data
 //
