@@ -9,9 +9,10 @@ import (
 	"github.com/lutzpeschlow/nas_tools/read"
 )
 
-func ExtractCardsAccordingList(ctrl *objects.Control_Object, mod *objects.Model) error {
+func ExtractCardsAccordingList(ctrl *objects.Config, mod *objects.Model) error {
 	fmt.Println("extract cards ...")
 	fmt.Print("option: ", ctrl.Option01, " \n")
+	fmt.Print("input: ", ctrl.Input01, " \n")
 	fmt.Print("output file: ", ctrl.OutputFile, " \n")
 	// output file
 	file, err := os.Create(ctrl.OutputFile)

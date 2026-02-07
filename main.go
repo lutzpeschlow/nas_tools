@@ -24,7 +24,7 @@ func main() {
 		fmt.Printf(" %v\n", err_ctrl)
 		os.Exit(1)
 	}
-	// ctrl.DebugPrintoutCtrlObj(&ctrl_obj)
+	ctrl.DebugPrintoutCtrlObj(&config_obj)
 
 	// model instance
 	mod := objects.Model{}
@@ -36,15 +36,14 @@ func main() {
 	//
 	// read input file
 	dat_file := config_obj.FullInputPath
-
 	err := read.ReadNasCards(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-	//
+	// execute actaion according enabled value in config object
 	if err := cmd.ExecuteAction(&config_obj, &mod); err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+		fmt.Printf("... %v\n", err)
 		os.Exit(1)
 	}
 

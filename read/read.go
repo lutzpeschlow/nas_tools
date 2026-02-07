@@ -119,7 +119,7 @@ func ReadNasCards(filename string, obj *objects.Model) error {
 		obj.NasCardList = append(obj.NasCardList, newCard)
 	}
 	//
-	fmt.Println(lineCount)
+	fmt.Println("total number of lines: ", lineCount)
 	// return scanner error
 	return scanner.Err()
 }

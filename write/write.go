@@ -12,13 +12,8 @@ import (
 )
 
 func WriteNasCards(config *objects.Config, obj *objects.Model) error {
-	// interface value
-	fmt.Println(config.Actions)
-	filename_val := config.Actions["output_file"]
-	fmt.Println(" value: ", filename_val)
-	// convert to string
-	filename, _ := filename_val.(string)
 	//
+	filename := config.FullOutputPath
 	fmt.Print("write nas cards into file: ", filename, "\n")
 	// assign file and get file object
 	f, err := os.Create(filename)
