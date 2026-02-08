@@ -20,7 +20,7 @@
     "EXTRACT_ACC_LIST": {
       "output_file": "result.txt",
       "output_dir": "result_dir",
-      "option_01": "NOD",
+      "option_01": "GRID",
       "input_01": "extract_ids.txt"
     }
   }

@@ -10,7 +10,7 @@ import (
 	"github.com/lutzpeschlow/nas_tools/write"
 )
 
-func ExecuteAction(config *objects.Config, mod *objects.Model) error {
+func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 	// // action := config.Enable
 	// fmt.Println(" - ", config.Enable, config.Defaults, config.Action)
 	//
@@ -32,20 +32,20 @@ func ExecuteAction(config *objects.Config, mod *objects.Model) error {
 	// 	}
 	// }
 
-	switch config.Action {
+	switch ctrl.Action {
 	case "READ":
-		return write.WriteNasCards(config, mod)
+		return write.WriteNasCards(ctrl, mod)
 	case "STATS":
 		read.GetNasCardsStatistics(mod)
 		debug.DebugPrintoutNasCardStats(mod)
 		return nil
 	case "SPLIT":
-		return write.WriteCardsToFiles(config.OutputDir, mod)
+		return write.WriteCardsToFiles(ctrl.OutputDir, mod)
 	case "EXTRACT_ACC_LIST":
-		return modify.ExtractCardsAccordingList(config, mod)
+		return modify.ExtractCardsAccordingList(ctrl, mod)
 	//
 	default:
-		return fmt.Errorf("unknown action: %s", config.Action)
+		return fmt.Errorf("unknown action: %s", ctrl.Action)
 	}
 	return nil
 }

@@ -151,36 +151,23 @@ func ExtractCardName(line string) string {
 
 }
 
-// content
-//fmt.Print("    --- content --- \n")
-//for id, card := range obj.NasCards {
-//	fmt.Printf("   ID %d: %+v\n", id, card)
-//}
-
-// func extractCardName(line string) string {
-//     // Nastran: Erste 8 Zeichen als Kartenname
-//     if len(line) < 8 {
-//         return ""
-//     }
-//     name := strings.TrimSpace(line[:8])
-//
-//     // Entferne + * , am Ende
-//     name = strings.TrimRight(name, "+*, ")
-//
-//     // Zu Großbuchstaben
-//     return strings.ToUpper(name)
-// }
-// func (m *Model) FillStats() {
-//     m.NasCardStats = make(map[string]int)
-//
-//     for _, card := range m.NasCards {
-//         for _, line := range card.Card {
-//             if len(line) == 0 { continue }
-//
-//             cardType := extractCardName(line)
-//             if cardType != "" {
-//                 m.NasCardStats[cardType]++
-//             }
-//         }
-//     }
-// }
+func ExtractCardID(line string) string {
+	// (1) Free Field
+	if strings.Contains(line[:10], ",") {
+		fields := strings.Split(line, ",")
+		if len(fields) >= 2 {
+			return strings.TrimSpace(fields[1])
+		}
+		return ""
+	}
+	// (2) FIXED FIELD
+	if strings.Contains(line[:8], "*") {
+		// (2.1) Large Field
+		id := strings.TrimSpace(line[8:24])
+		return strings.TrimRight(id, " ")
+	} else {
+		// (2.2) Small Field
+		id := strings.TrimSpace(line[8:16])
+		return strings.TrimRight(id, " ")
+	}
+}
