@@ -11,9 +11,9 @@ import (
 	"github.com/lutzpeschlow/nas_tools/read"
 )
 
-func WriteNasCards(config *objects.Config, obj *objects.Model) error {
+func WriteNasCards(ctrl *objects.Control, obj *objects.Model) error {
 	//
-	filename := config.FullOutputPath
+	filename := ctrl.FullOutputPath
 	fmt.Print("write nas cards into file: ", filename, "\n")
 	// assign file and get file object
 	f, err := os.Create(filename)

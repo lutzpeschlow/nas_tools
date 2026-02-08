@@ -10,7 +10,7 @@ import (
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
-func ReadControlJsonFile(path string, obj *objects.Config, osName string) error {
+func ReadControlJsonFile(path string, obj *objects.Control, osName string) error {
 	// read json control file
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -76,7 +76,7 @@ func ReadControlJsonFile(path string, obj *objects.Config, osName string) error 
 	return err
 }
 
-func DebugPrintoutCtrlObj(obj *objects.Config) {
+func DebugPrintoutCtrlObj(obj *objects.Control) {
 	fmt.Print("debug printout of control object: \n")
 	fmt.Print("   Action:       ", obj.Action, "\n")
 	fmt.Print("   InputFile:    ", obj.InputFile, "\n")

@@ -3,10 +3,10 @@
     "READ": false,
     "STATS": false,
     "SPLIT": false,
-    "EXTRACT_ACC_LIST": true
+    "EXTRACT_ACC_LIST": true 
   },
   "defaults": {
-    "input_file": "reg_test_01.dat",
+    "input_file": "reg_test_02.dat",
     "input_dir": "regression_tests"
   },
   "actions": {

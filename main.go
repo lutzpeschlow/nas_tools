@@ -16,33 +16,32 @@ import (
 // === main ===
 // ============================================================================
 func main() {
-	// ctrl_obj := objects.Control_Object{}
-	config_obj := objects.Config{}
+	// get os and current directory
 	osName := runtime.GOOS
-	err_ctrl := ctrl.ReadControlJsonFile("control.json", &config_obj, osName)
+	current_dir, _ := os.Getwd()
+	fmt.Println("current directory:", current_dir)
+	// ctrl_obj
+	ctrl_obj := objects.Control{}
+	err_ctrl := ctrl.ReadControlJsonFile("control.json", &ctrl_obj, osName)
 	if err_ctrl != nil {
 		fmt.Printf(" %v\n", err_ctrl)
 		os.Exit(1)
 	}
-	ctrl.DebugPrintoutCtrlObj(&config_obj)
+	ctrl.DebugPrintoutCtrlObj(&ctrl_obj)
 
 	// model instance
 	mod := objects.Model{}
-	// create map with key: int and value: *NasCard
-	mod.NasCards = make(map[int]*objects.NasCard)
-	// get current directory
-	current_dir, _ := os.Getwd()
-	fmt.Println("current directory:", current_dir)
+
 	//
 	// read input file
-	dat_file := config_obj.FullInputPath
-	err := read.ReadNasCards(dat_file, &mod)
+	dat_file := ctrl_obj.FullInputPath
+	err := read.ReadNasFile(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 	// execute actaion according enabled value in config object
-	if err := cmd.ExecuteAction(&config_obj, &mod); err != nil {
+	if err := cmd.ExecuteAction(&ctrl_obj, &mod); err != nil {
 		fmt.Printf("... %v\n", err)
 		os.Exit(1)
 	}

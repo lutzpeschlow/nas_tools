@@ -1,19 +1,6 @@
 package objects
 
-// control object
-type Control_Object struct {
-	Action     string
-	InputFile  string
-	InputDir   string
-	OutputFile string
-	OutputDir  string
-	Option01   string
-	//
-	FullInputPath  string
-	FullOutputPath string
-}
-
-type Config struct {
+type Control struct {
 	// orig data stored in map
 	Enable   map[string]bool `json:"enable"`
 	Defaults struct {
