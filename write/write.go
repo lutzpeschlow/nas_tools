@@ -65,7 +65,6 @@ func WriteCardsToFiles(dir string, obj *objects.Model) error {
 		cardType := read.ExtractCardName(firstLine)
 		cardTypes[cardType] = append(cardTypes[cardType], card.Card)
 	}
-
 	// create own file
 	for cardType, cards := range cardTypes {
 		//
@@ -77,7 +76,6 @@ func WriteCardsToFiles(dir string, obj *objects.Model) error {
 			for _, line := range card {
 				content.WriteString(line + "\n")
 			}
-			// content.WriteString("\n") // Leere Zeile zwischen Karten
 		}
 		//
 		if err := os.WriteFile(filepath, []byte(content.String()), 0644); err != nil {
@@ -85,6 +83,6 @@ func WriteCardsToFiles(dir string, obj *objects.Model) error {
 		}
 		fmt.Printf("created: %s (%d cards)\n", filepath, len(cards))
 	}
-
+	// return value
 	return nil
 }
