@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/lutzpeschlow/nas_tools/cmd"
 	"github.com/lutzpeschlow/nas_tools/ctrl"
@@ -20,6 +21,9 @@ func main() {
 	osName := runtime.GOOS
 	current_dir, _ := os.Getwd()
 	fmt.Println("current directory:", current_dir)
+	// timer
+	start := time.Now()
+	fmt.Println(" start:", start.Format(time.RFC3339Nano))
 	// ctrl_obj
 	ctrl_obj := objects.Control{}
 	err_ctrl := ctrl.ReadControlJsonFile("control.json", &ctrl_obj, osName)
@@ -45,5 +49,8 @@ func main() {
 		fmt.Printf("... %v\n", err)
 		os.Exit(1)
 	}
+	// timer
+	elapsed := time.Since(start)
+	fmt.Println(" elapsed:", elapsed)
 
 }

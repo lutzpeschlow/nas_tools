@@ -2,12 +2,12 @@
   "enable": {
     "READ": false,
     "STATS": false,
-    "SPLIT": false,
-    "EXTRACT_ACC_LIST": true 
+    "SPLIT": true,
+    "EXTRACT_ACC_LIST": false 
   },
   "defaults": {
-    "input_file": "reg_test_02.dat",
-    "input_dir": "regression_tests"
+    "input_file": "sol_101_airbus.exp",
+    "input_dir": "../perf_test"
   },
   "actions": {
     "READ": {
