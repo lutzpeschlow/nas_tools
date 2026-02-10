@@ -85,7 +85,7 @@ func DebugPrintoutCtrlObj(obj *objects.Control) {
 	fmt.Print("   OutputDir:    ", obj.OutputDir, "\n")
 	fmt.Print("   Option01:     ", obj.Option01, "\n")
 	fmt.Print("   Input01:     ", obj.Input01, "\n")
-	fmt.Print("      FullInputPath::     ", obj.FullInputPath, "\n")
-	fmt.Print("      FullOutpuPath::     ", obj.FullOutputPath, "\n")
+	fmt.Print("      FullInputPath:     ", obj.FullInputPath, "\n")
+	fmt.Print("      FullOutpuPath:     ", obj.FullOutputPath, "\n")
 
 }

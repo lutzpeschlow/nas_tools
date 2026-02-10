@@ -25,7 +25,7 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		modify.ExtractCardsAccordingList(ctrl, mod)
 	//
 	default:
-		fmt.Println("unknown action: %s", ctrl.Action)
+		fmt.Println("unknown action: ", ctrl.Action)
 	}
 
 	// return variable

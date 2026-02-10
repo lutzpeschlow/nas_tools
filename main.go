@@ -39,7 +39,7 @@ func main() {
 	//
 	// read input file
 	dat_file := ctrl_obj.FullInputPath
-	err := read.ReadNasFile(dat_file, &mod)
+	_, _, err := read.ReadNasFile(dat_file, &mod)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return

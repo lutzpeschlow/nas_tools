@@ -16,15 +16,41 @@ import (
 //
 // input :  file name,  model object
 // output : error/return value
-func ReadNasFile(filename string, obj *objects.Model) error {
+func ReadNasFile(filename string, obj *objects.Model) (len1 int, len2 int, err error) {
 	fmt.Println("... read nastran cards: ", filename)
-	// get file object and close with defer
+	// PASS 1
+	// searching for BEGIN BULK
+	// hasBulk is set
+	file1, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("... problem reading file: ", filename)
+		return len1, len2, err
+	}
+	defer file1.Close()
+
+	scanner1 := bufio.NewScanner(file1)
+	hasBulk := false
+	for scanner1.Scan() {
+		if strings.Contains(scanner1.Text(), "BEGIN BULK") {
+			hasBulk = true
+			break
+		}
+	}
+	if !hasBulk {
+		fmt.Println("WARN: No BEGIN BULK")
+	}
+	// PASS 2
+	// now regular parsing
+	// inBulk will be set depending on hasBulk
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("... problem reading file: ", filename)
-		return err
+		return len1, len2, err
 	}
 	defer file.Close()
+	// set true if there was no BEGIN BULK in PASS 1
+	// set false if there was any BEGIN BULK, and wait till BEGIN BULK
+	inBulk := !hasBulk
 	// scan object, str.Builder object and further variables
 	scanner := bufio.NewScanner(file)
 	// create map with key: int and value: *NasCard
@@ -33,9 +59,8 @@ func ReadNasFile(filename string, obj *objects.Model) error {
 	inCard := false
 	var first_sign byte
 	lineCount := 0
-	inBulk := false
 	// extract each card in separate block
-	// loop
+	// loop over lines
 	for scanner.Scan() {
 		lineCount = lineCount + 1
 		line := scanner.Text()
@@ -103,7 +128,8 @@ func ReadNasFile(filename string, obj *objects.Model) error {
 	// read file stats
 	fmt.Println("lines/cards: ", lineCount, len(obj.NasCards), len(obj.NasCardList))
 	// return scanner error
-	return scanner.Err()
+	return len(obj.NasCards), len(obj.NasCardList), scanner.Err()
+	// end of function - ReadNasFile
 }
 
 // function: GetNasCardsStatistics
@@ -112,8 +138,9 @@ func ReadNasFile(filename string, obj *objects.Model) error {
 //
 // input : model object
 // output : error/return value
-func GetNasCardsStatistics(obj *objects.Model) error {
-	//
+func GetNasCardsStatistics(obj *objects.Model) (int, error) {
+	fmt.Println("... get stats", len(obj.NasCards))
+	// init map for stats
 	obj.NasCardStats = make(map[string]int)
 	// loop through all cards
 	for _, card := range obj.NasCards {
@@ -128,7 +155,7 @@ func GetNasCardsStatistics(obj *objects.Model) error {
 			obj.NasCardStats[cardType]++
 		}
 	}
-	return nil
+	return len(obj.NasCardStats), nil
 }
 
 // function: extractCardName
