@@ -232,3 +232,7 @@ func GetCardEntry(line, entry int, card []string) string {
 
 	return field
 }
+
+func Add(a, b int) int {
+	return a + b
+}
