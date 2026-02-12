@@ -1,0 +1,10 @@
+{
+  "enable": {
+    "myaction": true
+  },
+  "defaults": {
+    "input_file": "test.nas"
+  }
+  // FEHLT: "actions" → Test "action not found"
+}
+

@@ -1,0 +1,14 @@
+{
+  "enable": {
+    "myaction": true
+  },
+  "defaults": {
+    "input_file": "test.nas",
+    "input_dir": "./input"
+  },
+  "actions": {
+    "myaction": {
+      "output_file": "result.txt"
+    }
+  }
+}

@@ -3,7 +3,6 @@ package ctrl
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -11,21 +10,27 @@ import (
 )
 
 func ReadControlJsonFile(path string, obj *objects.Control, osName string) error {
-	// read json control file
+	// (1) read json control file
 	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatal("Error reading config file:", err)
+		return fmt.Errorf("read control file: %w", err)
 	}
+	// (2) json parsen
 	if err := json.Unmarshal(data, &obj); err != nil {
-		log.Fatal("Error parsing JSON:", err)
+		return fmt.Errorf("parse config json %s: %w", path, err)
 	}
-	// (1)
-	// store data from json file in several maps and structs
-	// enable, defaults, actions
-	// loop through enabled actions
+	// (3) manage and process actions
+	//    store data from json file in several maps and structs
+	//    enable, defaults, actions
+	//    loop through enabled actions
 	for actionName, enabled := range obj.Enable {
 		if !enabled {
 			continue
+		}
+		// does exist action in object
+		actionData, exists := obj.Actions[actionName]
+		if !exists {
+			return fmt.Errorf("action %s not found in config", actionName)
 		}
 		// create map with key as integer but with flexible values - interface
 		actionParams := map[string]interface{}{}
@@ -33,7 +38,7 @@ func ReadControlJsonFile(path string, obj *objects.Control, osName string) error
 		actionParams["input_file"] = obj.Defaults.InputFile
 		actionParams["input_dir"] = obj.Defaults.InputDir
 		// further parameters
-		actionData, _ := obj.Actions[actionName]
+		// actionData, _ := obj.Actions[actionName]
 		// create map of map with data depending on action
 		for k, v := range actionData.(map[string]interface{}) {
 			actionParams[k] = v
@@ -73,7 +78,7 @@ func ReadControlJsonFile(path string, obj *objects.Control, osName string) error
 			obj.FullOutputPath = obj.OutputDir
 		}
 	}
-	return err
+	return nil
 }
 
 func DebugPrintoutCtrlObj(obj *objects.Control) {
