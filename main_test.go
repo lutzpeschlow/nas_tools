@@ -40,3 +40,13 @@ func TestReadNasFile(t *testing.T) {
 		t.Errorf("len_02 wrong: got %d, want %d", len_02, 47)
 	}
 }
+
+// test
+//
+//	run function without final error
+func TestRun_Success(t *testing.T) {
+	err := run()
+	if err != nil {
+		t.Errorf("run() should not deliver any error: %v", err)
+	}
+}
