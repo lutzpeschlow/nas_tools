@@ -1,13 +1,13 @@
 {
   "enable": {
-    "myaction": true
+    "READ": true
   },
   "defaults": {
-    "input_file": "test.nas",
-    "input_dir": "./input"
+    "input_file": "reg_test_01.dat",
+    "input_dir": "./regression_tests"
   },
   "actions": {
-    "myaction": {
+    "READ": {
       "output_file": "result.txt"
     }
   }
