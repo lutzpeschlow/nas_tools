@@ -1,7 +1,7 @@
 {
   "enable": {
-    "READ": false,
-    "STATS": true,
+    "READ": true,
+    "STATS": false,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false 
   },
