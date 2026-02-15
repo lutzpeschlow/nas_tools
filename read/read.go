@@ -3,6 +3,7 @@ package read
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -10,61 +11,66 @@ import (
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
-// function: ReadNasCards
+// ----------------------------------------------------------------------------
 //
-// description:
+//	ReadNasFile
 //
-// input :  file name,  model object
-// output : error/return value
-func ReadNasFile(filename string, obj *objects.Model) (len1 int, len2 int, err error) {
+// ----------------------------------------------------------------------------
+func ReadNasFile(filename string, obj *objects.Model) (int, int, error) {
 	fmt.Println("... read nastran cards: ", filename)
-	// PASS 1
-	// searching for BEGIN BULK
-	// hasBulk is set
-	file1, err := os.Open(filename)
+	// open nas file
+	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("... problem reading file: ", filename)
-		return len1, len2, err
+		return 0, 0, err
 	}
-	defer file1.Close()
+	defer file.Close()
+	// start parser
+	return ParseNasFromReader(file, obj)
+}
 
-	scanner1 := bufio.NewScanner(file1)
+// ----------------------------------------------------------------------------
+//
+//	ParseNasFromReader
+//
+// ----------------------------------------------------------------------------
+func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
+	// PASS 1:
+	// search for BEGIN BULK
+	data, err := io.ReadAll(r)
+	if err != nil {
+		return 0, 0, err
+	}
+	text := string(data)
+	scanner1 := bufio.NewScanner(strings.NewReader(text))
+	// scan through complete file and set hasBulk accordingly
 	hasBulk := false
 	for scanner1.Scan() {
-		if strings.Contains(scanner1.Text(), "BEGIN BULK") {
+		line := strings.TrimLeft(scanner1.Text(), " \t") // Spaces + Tabs
+		if strings.HasPrefix(line, "BEGIN BULK") {
 			hasBulk = true
 			break
 		}
 	}
-	if !hasBulk {
-		fmt.Println("WARN: No BEGIN BULK")
-	}
+	fmt.Println("INFO:  BEGIN BULK - ", hasBulk)
 	// PASS 2
-	// now regular parsing
-	// inBulk will be set depending on hasBulk
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("... problem reading file: ", filename)
-		return len1, len2, err
-	}
-	defer file.Close()
+	// loop over lines
+	scanner := bufio.NewScanner(strings.NewReader(text))
+
 	// set true if there was no BEGIN BULK in PASS 1
 	// set false if there was any BEGIN BULK, and wait till BEGIN BULK
 	inBulk := !hasBulk
-	// scan object, str.Builder object and further variables
-	scanner := bufio.NewScanner(file)
-	// create map with key: int and value: *NasCard
+	// create map with   key: int ;  value: *NasCard
 	obj.NasCards = make(map[int]*objects.NasCard)
 	var currentCard []string
 	inCard := false
-	var first_sign byte
+	var firstSign byte
 	lineCount := 0
 	// extract each card in separate block
 	// loop over lines
 	for scanner.Scan() {
 		lineCount = lineCount + 1
 		line := scanner.Text()
-
 		// are we in BEGIN BULK, set inBulk true
 		if strings.Contains(line, "BEGIN BULK") {
 			inBulk = true
@@ -87,13 +93,13 @@ func ReadNasFile(filename string, obj *objects.Model) (len1 int, len2 int, err e
 		}
 		// check first sign of line
 		if len(line) == 0 {
-			first_sign = '-'
+			firstSign = '-'
 		} else {
-			first_sign = line[0]
+			firstSign = line[0]
 		}
 		// (2) CARD - first is a letter
 		// new card alert, write existing buffer in object and setup for new card
-		if (first_sign >= 'a' && first_sign <= 'z') || (first_sign >= 'A' && first_sign <= 'Z') {
+		if (firstSign >= 'a' && firstSign <= 'z') || (firstSign >= 'A' && firstSign <= 'Z') {
 			// (2.1) there is content in current card that needs to be saved in object
 			if len(currentCard) > 0 {
 				// write existing card into NasCards and NasCardList
@@ -125,19 +131,17 @@ func ReadNasFile(filename string, obj *objects.Model) (len1 int, len2 int, err e
 		obj.NasCards[nextID] = newCard
 		obj.NasCardList = append(obj.NasCardList, newCard)
 	}
-	// read file stats
+	// stats of file
 	fmt.Println("lines/cards: ", lineCount, len(obj.NasCards), len(obj.NasCardList))
 	// return scanner error
 	return len(obj.NasCards), len(obj.NasCardList), scanner.Err()
-	// end of function - ReadNasFile
 }
 
-// function: GetNasCardsStatistics
+// ----------------------------------------------------------------------------
 //
-// description:
+//	GetNasCardsStatistics
 //
-// input : model object
-// output : error/return value
+// ----------------------------------------------------------------------------
 func GetNasCardsStatistics(obj *objects.Model) (int, error) {
 	fmt.Println("... get stats", len(obj.NasCards))
 	// init map for stats
@@ -158,12 +162,11 @@ func GetNasCardsStatistics(obj *objects.Model) (int, error) {
 	return len(obj.NasCardStats), nil
 }
 
-// function: extractCardName
+// ----------------------------------------------------------------------------
 //
-// description:
+//	ExtractCardName
 //
-// input : string
-// output : string
+// ----------------------------------------------------------------------------
 func ExtractCardName(line string) string {
 	if len(line) < 4 {
 		return ""
@@ -179,6 +182,11 @@ func ExtractCardName(line string) string {
 
 }
 
+// ----------------------------------------------------------------------------
+//
+//	ExtractCardID
+//
+// ----------------------------------------------------------------------------
 func ExtractCardID(line string) string {
 	// (1) Free Field
 	if strings.Contains(line[:10], ",") {
@@ -200,10 +208,11 @@ func ExtractCardID(line string) string {
 	}
 }
 
-// GetCardEntry extracts the entry at the specified position from a NASTRAN card.
-// line is 0-based index of the starting line in the card slice.
-// entry is 1-based field number (1-10).
-// card is slice of strings, each representing one line of the card.
+// ----------------------------------------------------------------------------
+//
+//	GetCardEntry
+//
+// ----------------------------------------------------------------------------
 func GetCardEntry(line, entry int, card []string) string {
 	if line < 0 || entry < 1 || entry > 10 || line >= len(card) {
 		return ""
@@ -258,8 +267,4 @@ func GetCardEntry(line, entry int, card []string) string {
 	}
 
 	return field
-}
-
-func Add(a, b int) int {
-	return a + b
 }

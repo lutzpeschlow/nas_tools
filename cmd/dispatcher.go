@@ -10,24 +10,43 @@ import (
 	"github.com/lutzpeschlow/nas_tools/write"
 )
 
+// ----------------------------------------------------------------------------
+//
+//	ExecuteAction
+//
+// ----------------------------------------------------------------------------
 func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
-
 	// switch for actions
 	switch ctrl.Action {
+	// read nastran file and write to new file
 	case "READ":
-		write.WriteNasCards(ctrl, mod)
+		err := write.WriteNasCards(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("WriteNasCards failed: %w", err)
+		}
+	// get statistics of nastran file
 	case "STATS":
-		read.GetNasCardsStatistics(mod)
+		_, err := read.GetNasCardsStatistics(mod)
+		if err != nil {
+			return fmt.Errorf("GetNasCardsStatistics failed: %w", err)
+		}
 		debug.DebugPrintoutNasCardStats(mod)
+	// split nastran file into several files per card
 	case "SPLIT":
-		write.WriteCardsToFiles(ctrl.OutputDir, mod)
+		err := write.WriteCardsToFiles(ctrl.OutputDir, mod)
+		if err != nil {
+			return fmt.Errorf("WriteCardsToFiles failed: %w", err)
+		}
+	// extract entities according list
 	case "EXTRACT_ACC_LIST":
-		modify.ExtractCardsAccordingList(ctrl, mod)
-	//
+		err := modify.ExtractCardsAccordingList(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("ExtractCardsAccordingList failed: %w", err)
+		}
+	// unknown action
 	default:
-		fmt.Println("unknown action: ", ctrl.Action)
+		return fmt.Errorf("unknown action: %s", ctrl.Action)
 	}
-
 	// return variable
 	return nil
 }

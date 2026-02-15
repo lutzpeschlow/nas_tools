@@ -11,6 +11,11 @@ import (
 	"github.com/lutzpeschlow/nas_tools/read"
 )
 
+// ----------------------------------------------------------------------------
+//
+//	WriteNasCards
+//
+// ----------------------------------------------------------------------------
 func WriteNasCards(ctrl *objects.Control, obj *objects.Model) error {
 	//
 	filename := ctrl.FullOutputPath
@@ -45,8 +50,11 @@ func WriteNasCards(ctrl *objects.Control, obj *objects.Model) error {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------
-
+// ----------------------------------------------------------------------------
+//
+//	WriteCardsToFiles
+//
+// ----------------------------------------------------------------------------
 func WriteCardsToFiles(dir string, obj *objects.Model) error {
 
 	// directory handling

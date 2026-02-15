@@ -1,12 +1,12 @@
 {
   "enable": {
-    "READ": true,
-    "STATS": false,
+    "READ": false,
+    "STATS": true,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false 
   },
   "defaults": {
-    "input_file": "reg_test_02.dat",
+    "input_file": "reg_test_01.dat",
     "input_dir": "./regression_tests"
   },
   "actions": {
