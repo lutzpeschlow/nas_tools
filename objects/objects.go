@@ -29,10 +29,17 @@ type Control struct {
 type Model struct {
 	NasCards     map[int]*NasCard
 	NasCardList  []*NasCard
+	NasFieldList []*ParsedCard
 	NasCardStats map[string]int
 }
 
 // NasCard object
 type NasCard struct {
 	Card []string
+}
+
+type ParsedCard struct {
+	Name   string
+	Fields []string // Max 10 Felder
+	Index  int      // Ursprungs-Index in NasCardList
 }

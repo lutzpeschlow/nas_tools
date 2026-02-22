@@ -3,6 +3,7 @@ package debug
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
@@ -48,4 +49,23 @@ func DebugPrintoutNasCardStats(obj *objects.Model) {
 	fmt.Print("-----------\n")
 	fmt.Printf("%-*s: %d\n", maxLen, "TOTAL", total)
 	fmt.Print("===========\n")
+}
+
+func DebugPrintoutNasFieldList(obj *objects.Model) {
+	for i, card := range obj.NasFieldList {
+		// Überschrift pro Karte
+		fmt.Printf("Karte #%d (Index %d): %s\n", i, card.Index, strings.ToUpper(card.Name))
+		fmt.Printf("  Felder (%d): %v\n", len(card.Fields), card.Fields)
+
+		// Formatierte Feld-Ausgabe (nummeriert)
+		fmt.Print("  [")
+		for j, field := range card.Fields {
+			if j > 0 {
+				fmt.Print(" | ")
+			}
+			fmt.Printf("%s", field)
+		}
+		fmt.Println("]")
+		fmt.Println()
+	}
 }

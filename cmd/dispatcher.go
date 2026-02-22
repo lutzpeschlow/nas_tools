@@ -5,6 +5,7 @@ import (
 
 	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/modify"
+	"github.com/lutzpeschlow/nas_tools/nas_deck"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
 	"github.com/lutzpeschlow/nas_tools/write"
@@ -45,9 +46,10 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		}
 	// get card entry
 	case "GET_CARD_ENTRY":
-		err := read.GetCardEntry(ctrl, mod)
+		err := nas_deck.ParseAllCards(mod)
+		debug.DebugPrintoutNasFieldList(mod)
 		if err != nil {
-			return fmt.Errorf("GetCardEntry failed: %w", err)
+			return fmt.Errorf("... failed: %w", err)
 		}
 	// unknown action
 	default:

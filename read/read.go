@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
@@ -206,72 +205,4 @@ func ExtractCardID(line string) string {
 		id := strings.TrimSpace(line[8:16])
 		return strings.TrimRight(id, " ")
 	}
-}
-
-// ----------------------------------------------------------------------------
-//
-//	GetCardEntry
-//
-// ----------------------------------------------------------------------------
-func GetCardEntry(ctrl *objects.Control, mod *objects.Model) string {
-
-	// line, entry int, card []string
-	cardName := ctrl.Array01[0].(string)
-	line := int(ctrl.Array01[1].(int))
-	entry := int(ctrl.Array01[2].(int))
-
-	if line < 0 || entry < 1 || entry > 10 || line >= len(cardName) {
-		return ""
-	}
-
-	for _, card := range mod.NasCardList {
-	// Detect format from first line of card
-	firstLine := strings.TrimLeft(card[line], " \t")
-	isLongField := strings.Contains(firstLine, "*")
-
-	fieldSize := 8
-	fieldsPerLine := 10
-	if isLongField {
-		fieldSize = 16
-		fieldsPerLine = 6 // First field 8 chars, then 4x16 chars = 72 chars total
-	}
-
-	// Calculate which line and position the entry is on
-	targetLine := line + (entry-1)/fieldsPerLine
-	if targetLine >= len(card) {
-		return ""
-	}
-
-	fieldPos := (entry - 1) % fieldsPerLine
-	lineStr := card[targetLine]
-
-	// Handle continuation lines (start with spaces, +, ,, or *)
-	contPrefix := ""
-	if targetLine > line {
-		trimmed := strings.TrimLeft(lineStr, " \t")
-		if len(trimmed) > 0 && (trimmed[0] == '+' || trimmed[0] == ',' || trimmed[0] == '*') {
-			contPrefix = trimmed[:1]
-			lineStr = strings.TrimLeft(lineStr, " \t"+contPrefix)
-		}
-	}
-
-	// Extract field using fixed width
-	startPos := fieldPos * fieldSize
-	if startPos >= len(lineStr) {
-		return ""
-	}
-
-	endPos := startPos + fieldSize
-	if endPos > len(lineStr) {
-		endPos = len(lineStr)
-	}
-
-	field := strings.TrimSpace(lineStr[startPos:endPos])
-
-	// Remove continuation identifier if it's in the last field of continuation line
-	if fieldPos == fieldsPerLine-1 && targetLine > line && len(field) > 0 {
-		field = strings.TrimSpace(regexp.MustCompile(`^[+\s,*$]+|[+\s,*$]+$`).ReplaceAllString(field, ""))
-	}
-
-	return field
 }
