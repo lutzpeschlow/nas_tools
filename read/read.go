@@ -213,11 +213,18 @@ func ExtractCardID(line string) string {
 //	GetCardEntry
 //
 // ----------------------------------------------------------------------------
-func GetCardEntry(line, entry int, card []string) string {
-	if line < 0 || entry < 1 || entry > 10 || line >= len(card) {
+func GetCardEntry(ctrl *objects.Control, mod *objects.Model) string {
+
+	// line, entry int, card []string
+	cardName := ctrl.Array01[0].(string)
+	line := int(ctrl.Array01[1].(int))
+	entry := int(ctrl.Array01[2].(int))
+
+	if line < 0 || entry < 1 || entry > 10 || line >= len(cardName) {
 		return ""
 	}
 
+	for _, card := range mod.NasCardList {
 	// Detect format from first line of card
 	firstLine := strings.TrimLeft(card[line], " \t")
 	isLongField := strings.Contains(firstLine, "*")

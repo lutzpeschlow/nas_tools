@@ -1,9 +1,10 @@
 {
   "enable": {
     "READ": false,
-    "STATS": true,
+    "STATS": false,
     "SPLIT": false,
-    "EXTRACT_ACC_LIST": false 
+    "EXTRACT_ACC_LIST": false, 
+    "GET_CARD_ENTRY": true
   },
   "defaults": {
     "input_file": "reg_test_01.dat",
@@ -22,6 +23,10 @@
       "output_dir": "result_dir",
       "option_01": "GRID",
       "input_01": "extract_ids.txt"
+    },
+    "GET_CARD_ENTRY": {
+      "output_file": "result.txt",
+      "array_01": ["CQUAD4",1,3]
     }
   }
 }

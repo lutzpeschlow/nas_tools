@@ -43,6 +43,12 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		if err != nil {
 			return fmt.Errorf("ExtractCardsAccordingList failed: %w", err)
 		}
+	// get card entry
+	case "GET_CARD_ENTRY":
+		err := read.GetCardEntry(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("GetCardEntry failed: %w", err)
+		}
 	// unknown action
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)

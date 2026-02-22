@@ -15,6 +15,7 @@ type Control struct {
 	OutputFile string
 	OutputDir  string
 	Option01   string
+	Array01    []interface{}
 	Input01    string
 	// combined from previous
 	FullInputPath  string
