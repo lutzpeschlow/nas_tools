@@ -46,11 +46,12 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		}
 	// get card entry
 	case "GET_CARD_ENTRY":
-		err := nas_deck.ParseAllCards(mod)
-		debug.DebugPrintoutNasFieldList(mod)
-		if err != nil {
-			return fmt.Errorf("... failed: %w", err)
-		}
+		nas_deck.ParseAllCards(mod)
+
+		// debug.DebugPrintoutNasFieldList(mod)
+		// if err != nil {
+		// 	return fmt.Errorf("... failed: %w", err)
+		// }
 	// unknown action
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)
