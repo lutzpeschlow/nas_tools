@@ -62,7 +62,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	// create map with   key: int ;  value: *NasCard
 	obj.NasCards = make(map[int]*objects.NasCard)
 	var currentCard []string
-	var currentFields [][]string
+	var currentFields []string
 	inCard := false
 	var firstSign byte
 	lineCount := 0
@@ -111,7 +111,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
-
+				fmt.Println(currentCard)
 				currentFields = get_fields_from_line(line)
 				fmt.Println(currentFields)
 
@@ -146,19 +146,62 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 //	get_fields_from_line
 //
 // ----------------------------------------------------------------------------
-func get_fields_from_line(line string) [][]string {
-	row := make([]string, 10)
+func get_fields_from_line(line string) []string {
+	switch {
+	case strings.ContainsAny(line, "*"): // Large Field
+		return parseLargeField(line)
+	case strings.Contains(line, ","): // Free Field
+		return parseFreeField(line)
+	default: // Small Field
+		return parseSmallField(line)
+	}
+}
+
+func parseSmallField(line string) []string {
+	// extend to 80 char
+	line += strings.Repeat(" ", 80-len(line))
+	// empty slice with capacity for 10 entries
+	row := make([]string, 0, 10)
+	// loop over entries
 	for j := 0; j < 10; j++ {
+		// set start and end value
 		start := j * 8
 		end := start + 8
-		if end > len(line) {
-			end = len(line)
-		}
-		row[j] = strings.TrimSpace(line[start:end])
+		// append according value in slice
+		row = append(row, strings.TrimSpace(line[start:end]))
+		// deb := strings.TrimSpace(line[start:end])
+		// fmt.Println(deb)
+
 	}
-	// ✅ Direkt als 1-Zeilen-Slice returnen
-	return [][]string{row}
+	return row
 }
+
+func parseLargeField(line string) []string {
+	return nil
+}
+func parseFreeField(line string) []string {
+	return nil
+}
+
+// fmt.Print("+")
+// for range row {
+// 	fmt.Print(strings.Repeat("-", 9) + "+")
+// }
+// fmt.Println()
+//
+// fmt.Print("|")
+// for _, field := range row {
+// 	fmt.Printf(" %7s |", field)
+// }
+// fmt.Println()
+//
+// fmt.Print("+")
+// for range row {
+// 	fmt.Print(strings.Repeat("-", 9) + "+")
+// }
+// fmt.Println()
+
+// return value as slice of strings
 
 // ----------------------------------------------------------------------------
 //
