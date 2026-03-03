@@ -62,6 +62,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	// create map with   key: int ;  value: *NasCard
 	obj.NasCards = make(map[int]*objects.NasCard)
 	var currentCard []string
+	var currentFields [][]string
 	inCard := false
 	var firstSign byte
 	lineCount := 0
@@ -110,6 +111,10 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
+
+				currentFields = get_fields_from_line(line)
+				fmt.Println(currentFields)
+
 				inCard = true
 				// (2.2) simply add line to current card, no action with previous card
 			} else {
@@ -134,6 +139,25 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	fmt.Println("lines/cards: ", lineCount, len(obj.NasCards), len(obj.NasCardList))
 	// return scanner error
 	return len(obj.NasCards), len(obj.NasCardList), scanner.Err()
+}
+
+// ----------------------------------------------------------------------------
+//
+//	get_fields_from_line
+//
+// ----------------------------------------------------------------------------
+func get_fields_from_line(line string) [][]string {
+	row := make([]string, 10)
+	for j := 0; j < 10; j++ {
+		start := j * 8
+		end := start + 8
+		if end > len(line) {
+			end = len(line)
+		}
+		row[j] = strings.TrimSpace(line[start:end])
+	}
+	// ✅ Direkt als 1-Zeilen-Slice returnen
+	return [][]string{row}
 }
 
 // ----------------------------------------------------------------------------

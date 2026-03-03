@@ -35,7 +35,8 @@ type Model struct {
 
 // NasCard object
 type NasCard struct {
-	Card []string
+	Card   []string
+	Fields [][]string
 }
 
 type ParsedCard struct {
