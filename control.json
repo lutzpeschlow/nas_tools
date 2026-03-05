@@ -7,7 +7,7 @@
     "GET_CARD_ENTRY": false
   },
   "defaults": {
-    "input_file": "reg_test_01.dat",
+    "input_file": "entry_test_01.dat",
     "input_dir": "./regression_tests"
   },
   "actions": {

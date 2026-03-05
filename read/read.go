@@ -111,7 +111,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
-				fmt.Println(currentCard)
+
 				currentFields = get_fields_from_line(line)
 				fmt.Println(currentFields)
 
@@ -119,12 +119,20 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// (2.2) simply add line to current card, no action with previous card
 			} else {
 				currentCard = append(currentCard, line)
+
+				currentFields = get_fields_from_line(line)
+				fmt.Println(currentFields)
+
 				inCard = true
 			}
 			// (3) CONT - in card any continuation line
 		} else {
 			if inCard {
 				currentCard = append(currentCard, line)
+
+				currentFields = get_fields_from_line(line)
+				fmt.Println(currentFields)
+
 			}
 		}
 	}
@@ -148,15 +156,23 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 // ----------------------------------------------------------------------------
 func get_fields_from_line(line string) []string {
 	switch {
-	case strings.ContainsAny(line, "*"): // Large Field
-		return parseLargeField(line)
-	case strings.Contains(line, ","): // Free Field
+	// free field
+	case strings.Contains(line, ","):
 		return parseFreeField(line)
-	default: // Small Field
+	// large field
+	case strings.ContainsAny(line, "*"):
+		return parseLargeField(line)
+	// small field
+	default:
 		return parseSmallField(line)
 	}
 }
 
+// ----------------------------------------------------------------------------
+//
+//	parseSmallField
+//
+// ----------------------------------------------------------------------------
 func parseSmallField(line string) []string {
 	// extend to 80 char
 	line += strings.Repeat(" ", 80-len(line))
@@ -173,35 +189,82 @@ func parseSmallField(line string) []string {
 		// fmt.Println(deb)
 
 	}
+	print_entries(row)
 	return row
 }
 
+// ----------------------------------------------------------------------------
+//
+//	parseLargeField
+//
+// ----------------------------------------------------------------------------
 func parseLargeField(line string) []string {
-	return nil
+	line += strings.Repeat(" ", 80-len(line))
+	row := make([]string, 0, 6)
+	row = append(row, strings.TrimSpace(line[0:8]))
+	for j := 0; j < 4; j++ {
+		start := 8 + j*16
+		end := start + 16
+		row = append(row, strings.TrimSpace(line[start:end]))
+	}
+	row = append(row, strings.TrimSpace(line[72:80]))
+	print_entries(row)
+	return row
 }
+
+// ----------------------------------------------------------------------------
+//
+//	parseFreeField
+//
+// ----------------------------------------------------------------------------
 func parseFreeField(line string) []string {
-	return nil
+	var finalRow []string
+	row := strings.Split(line, ",")
+	fmt.Println("row:", row)
+	for i := range row {
+		row[i] = strings.TrimSpace(row[i])
+	}
+	if strings.Contains(row[0], "*") {
+		fmt.Println("large", row)
+		finalRow = make([]string, 6)
+		for i := 0; i < len(row) && i < 6; i++ {
+			finalRow[i] = row[i]
+		}
+	} else {
+		finalRow = make([]string, 10)
+		for i := 0; i < len(row) && i < 10; i++ {
+			finalRow[i] = row[i]
+		}
+	}
+	print_entries(row)
+	return row
 }
 
-// fmt.Print("+")
-// for range row {
-// 	fmt.Print(strings.Repeat("-", 9) + "+")
-// }
-// fmt.Println()
+// ----------------------------------------------------------------------------
 //
-// fmt.Print("|")
-// for _, field := range row {
-// 	fmt.Printf(" %7s |", field)
-// }
-// fmt.Println()
+//	print_entries
 //
-// fmt.Print("+")
-// for range row {
-// 	fmt.Print(strings.Repeat("-", 9) + "+")
-// }
-// fmt.Println()
+// ----------------------------------------------------------------------------
+func print_entries(row []string) int {
+	fmt.Print("+")
+	for range row {
+		fmt.Print(strings.Repeat("-", 9) + "+")
+	}
+	fmt.Println()
 
-// return value as slice of strings
+	fmt.Print("|")
+	for _, field := range row {
+		fmt.Printf(" %7s |", field)
+	}
+	fmt.Println()
+
+	fmt.Print("+")
+	for range row {
+		fmt.Print(strings.Repeat("-", 9) + "+")
+	}
+	fmt.Println()
+	return 0
+}
 
 // ----------------------------------------------------------------------------
 //
