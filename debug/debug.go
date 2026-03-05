@@ -3,10 +3,16 @@ package debug
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
+// ----------------------------------------------------------------------------
+//
+//	DebugPrintoutModelObj
+//
+// ----------------------------------------------------------------------------
 func DebugPrintoutModelObj(obj *objects.Model) {
 	fmt.Print("debug printout of control object: \n")
 	keys := make([]int, 0, len(obj.NasCards))
@@ -25,6 +31,11 @@ func DebugPrintoutModelObj(obj *objects.Model) {
 	}
 }
 
+// ----------------------------------------------------------------------------
+//
+//	DebugPrintoutNasCardStats
+//
+// ----------------------------------------------------------------------------
 func DebugPrintoutNasCardStats(obj *objects.Model) {
 	fmt.Print("debug printout of nas card stats: \n")
 	if len(obj.NasCardStats) == 0 {
@@ -50,21 +61,54 @@ func DebugPrintoutNasCardStats(obj *objects.Model) {
 	fmt.Print("===========\n")
 }
 
-func DebugPrintoutNasFieldList(obj *objects.Model) {
-	fmt.Println(" debug printout of nas field list ...", len(obj.NasFieldList), len(obj.NasCardList))
+// ----------------------------------------------------------------------------
+//
+//	DeburgPrintoutEntries
+//
+// ----------------------------------------------------------------------------
+func DeburgPrintoutEntries(row []string) int {
+	isLargeField := false
+	if len(row) > 0 && strings.Contains(row[0], "*") {
+		isLargeField = true
+	}
+	// (1)
+	// small field output
+	if !isLargeField {
+		// optic for small field: +--------+--------+--------+
+		fmt.Print("+")
+		for range row {
+			fmt.Print(strings.Repeat("-", 7) + "+")
+		}
+		fmt.Println()
+		// data
+		for _, field := range row {
+			fmt.Printf("%-8s", field)
+		}
+		fmt.Println("")
+		// (2)
+		// large field output
+	} else {
+		// optic for large field: +-------+---------------+---------------+
+		fmt.Print("+" + strings.Repeat("-", 7) + "+")
+		for i := 0; i < 4; i++ {
+			fmt.Print(strings.Repeat("-", 15) + "+")
+		}
+		fmt.Print(strings.Repeat("-", 7) + "+")
+		fmt.Println()
+		// data
+		fmt.Println(row, len(row))
+		fmt.Printf("%-8s", row[0])
+		for i := 1; i < 5 && i < len(row); i++ {
+			fmt.Printf("%-16s", row[i])
+		}
+		if len(row) >= 5 {
+			fmt.Printf("%-8s", row[5])
+			fmt.Printf("\n")
+		} else {
+			fmt.Println("")
+		}
 
-	// for i, card := range obj.NasFieldList {
-	// 	fmt.Println(i)
-	// 	fmt.Printf("card #%d (index %d): %s\n", i, card.Index, strings.ToUpper(card.Name))
-	// 	fmt.Printf("  fields (%d): %v\n", len(card.Fields), card.Fields)
-	// 	fmt.Print("  [")
-	// 	for j, field := range card.Fields {
-	// 		if j > 0 {
-	// 			fmt.Print(" | ")
-	// 		}
-	// 		fmt.Printf("%s", field)
-	// 	}
-	// 	fmt.Println("]")
-	// 	fmt.Println()
-	// }
+	}
+
+	return 0
 }

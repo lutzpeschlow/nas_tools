@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
@@ -117,11 +118,10 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				currentCard = append(currentCard, line)
 
 				f_entries = get_fields_from_line(line)
-				fmt.Println(f_entries)
+
 				// clean up current entry lines and assign new data
 				f_entry_lines = f_entry_lines[:0]
 				f_entry_lines = append(f_entry_lines, f_entries)
-				fmt.Println(f_entry_lines)
 
 				inCard = true
 				// (2.2) simply add line to current card, no action with previous card
@@ -130,8 +130,6 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 
 				f_entries = get_fields_from_line(line)
 				f_entry_lines = append(f_entry_lines, f_entries)
-				fmt.Println(f_entries)
-				fmt.Println(f_entry_lines)
 
 				inCard = true
 			}
@@ -142,8 +140,6 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 
 				f_entries = get_fields_from_line(line)
 				f_entry_lines = append(f_entry_lines, f_entries)
-				fmt.Println(f_entries)
-				fmt.Println(f_entry_lines)
 
 			}
 		}
@@ -204,7 +200,7 @@ func parseSmallField(line string) []string {
 		// fmt.Println(deb)
 
 	}
-	print_entries(row)
+	debug.DeburgPrintoutEntries(row)
 	return row
 }
 
@@ -223,7 +219,7 @@ func parseLargeField(line string) []string {
 		row = append(row, strings.TrimSpace(line[start:end]))
 	}
 	row = append(row, strings.TrimSpace(line[72:80]))
-	print_entries(row)
+	debug.DeburgPrintoutEntries(row)
 	return row
 }
 
@@ -235,12 +231,12 @@ func parseLargeField(line string) []string {
 func parseFreeField(line string) []string {
 	var finalRow []string
 	row := strings.Split(line, ",")
-	fmt.Println("row:", row)
+
 	for i := range row {
 		row[i] = strings.TrimSpace(row[i])
 	}
 	if strings.Contains(row[0], "*") {
-		fmt.Println("large", row)
+
 		finalRow = make([]string, 6)
 		for i := 0; i < len(row) && i < 6; i++ {
 			finalRow[i] = row[i]
@@ -251,34 +247,8 @@ func parseFreeField(line string) []string {
 			finalRow[i] = row[i]
 		}
 	}
-	print_entries(row)
+	debug.DeburgPrintoutEntries(row)
 	return row
-}
-
-// ----------------------------------------------------------------------------
-//
-//	print_entries
-//
-// ----------------------------------------------------------------------------
-func print_entries(row []string) int {
-	fmt.Print("+")
-	for range row {
-		fmt.Print(strings.Repeat("-", 9) + "+")
-	}
-	fmt.Println()
-
-	fmt.Print("|")
-	for _, field := range row {
-		fmt.Printf(" %7s |", field)
-	}
-	fmt.Println()
-
-	fmt.Print("+")
-	for range row {
-		fmt.Print(strings.Repeat("-", 9) + "+")
-	}
-	fmt.Println()
-	return 0
 }
 
 // ----------------------------------------------------------------------------
