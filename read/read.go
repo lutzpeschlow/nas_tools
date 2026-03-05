@@ -62,7 +62,8 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	// create map with   key: int ;  value: *NasCard
 	obj.NasCards = make(map[int]*objects.NasCard)
 	var currentCard []string
-	var currentFields []string
+	var f_entries []string
+	var f_entry_lines [][]string
 	inCard := false
 	var firstSign byte
 	lineCount := 0
@@ -105,23 +106,32 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// write existing card into NasCards and NasCardList
 				// create new string slice, initialize nil, add content
 				nextID := len(obj.NasCards)
-				newCard := &objects.NasCard{Card: append([]string(nil), currentCard...)}
+				newCard := &objects.NasCard{
+					Card:   append([]string(nil), currentCard...),
+					Fields: append([][]string(nil), f_entry_lines...),
+				}
 				obj.NasCards[nextID] = newCard
 				obj.NasCardList = append(obj.NasCardList, newCard)
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
 
-				currentFields = get_fields_from_line(line)
-				fmt.Println(currentFields)
+				f_entries = get_fields_from_line(line)
+				fmt.Println(f_entries)
+				// clean up current entry lines and assign new data
+				f_entry_lines = f_entry_lines[:0]
+				f_entry_lines = append(f_entry_lines, f_entries)
+				fmt.Println(f_entry_lines)
 
 				inCard = true
 				// (2.2) simply add line to current card, no action with previous card
 			} else {
 				currentCard = append(currentCard, line)
 
-				currentFields = get_fields_from_line(line)
-				fmt.Println(currentFields)
+				f_entries = get_fields_from_line(line)
+				f_entry_lines = append(f_entry_lines, f_entries)
+				fmt.Println(f_entries)
+				fmt.Println(f_entry_lines)
 
 				inCard = true
 			}
@@ -130,8 +140,10 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 			if inCard {
 				currentCard = append(currentCard, line)
 
-				currentFields = get_fields_from_line(line)
-				fmt.Println(currentFields)
+				f_entries = get_fields_from_line(line)
+				f_entry_lines = append(f_entry_lines, f_entries)
+				fmt.Println(f_entries)
+				fmt.Println(f_entry_lines)
 
 			}
 		}
@@ -139,7 +151,10 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	// cover last line in buffer ...
 	if len(currentCard) > 0 {
 		nextID := len(obj.NasCards)
-		newCard := &objects.NasCard{Card: append([]string(nil), currentCard...)}
+		newCard := &objects.NasCard{
+			Card:   append([]string(nil), currentCard...),
+			Fields: append([][]string(nil), f_entry_lines...),
+		}
 		obj.NasCards[nextID] = newCard
 		obj.NasCardList = append(obj.NasCardList, newCard)
 	}
