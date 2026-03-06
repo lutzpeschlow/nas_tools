@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/lutzpeschlow/nas_tools/debug"
-	"github.com/lutzpeschlow/nas_tools/modify"
-	"github.com/lutzpeschlow/nas_tools/nas_deck"
+	"github.com/lutzpeschlow/nas_tools/nas_methods"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
 	"github.com/lutzpeschlow/nas_tools/write"
@@ -40,19 +39,17 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		}
 	// extract entities according list
 	case "EXTRACT_ACC_LIST":
-		err := modify.ExtractCardsAccordingList(ctrl, mod)
+		err := nas_methods.ExtractCardsAccordingList(ctrl, mod)
 		if err != nil {
 			return fmt.Errorf("ExtractCardsAccordingList failed: %w", err)
 		}
 	// get card entry
 	case "GET_CARD_ENTRY":
-		nas_deck.ParseAllCards(mod)
-
-		// debug.DebugPrintoutNasFieldList(mod)
-		// if err != nil {
-		// 	return fmt.Errorf("... failed: %w", err)
-		// }
-	// unknown action
+		err := nas_methods.GetCardEntry(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("GetCardEntry failed: %w", err)
+		}
+		// default
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)
 	}

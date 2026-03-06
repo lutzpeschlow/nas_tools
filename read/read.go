@@ -287,10 +287,14 @@ func ExtractCardName(line string) string {
 	if len(line) < 4 {
 		return ""
 	}
-	name := strings.TrimSpace(line[:8])
+	end := 8
+	if len(line) < 8 {
+		end = len(line)
+	}
+	name := strings.TrimSpace(line[:end])
 	sepIndex := strings.IndexAny(name, ",+ *")
 	if sepIndex > 0 {
-		name = name[:sepIndex] // Bis zum Trennzeichen abschneiden
+		name = name[:sepIndex]
 	}
 	return strings.ToUpper(strings.TrimSpace(name))
 }

@@ -1,13 +1,13 @@
 {
   "enable": {
-    "READ": true,
+    "READ": false,
     "STATS": false,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
-    "GET_CARD_ENTRY": false
+    "GET_CARD_ENTRY": true
   },
   "defaults": {
-    "input_file": "entry_test_02.dat",
+    "input_file": "entry_test_03.dat",
     "input_dir": "./regression_tests"
   },
   "actions": {
@@ -26,7 +26,7 @@
     },
     "GET_CARD_ENTRY": {
       "output_file": "result.txt",
-      "array_01": ["CQUAD4",1,3]
+      "array_01": ["PCOMP",3,3]
     }
   }
 }
