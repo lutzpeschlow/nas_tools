@@ -94,6 +94,13 @@ func ExtractCardsAccordingList(ctrl *objects.Control, mod *objects.Model) error 
 	return nil
 }
 
+func getPosition(row, entry int) int {
+	if row == 1 {
+		return entry
+	}
+	return 9 + 8*(row-2) + entry
+}
+
 // ----------------------------------------------------------------------------
 //
 //	GetCardEntry
