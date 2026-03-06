@@ -33,6 +33,17 @@ func DebugPrintoutModelObj(obj *objects.Model) {
 
 // ----------------------------------------------------------------------------
 //
+//	DebugPrintoutNasFieldEntries
+//
+// ----------------------------------------------------------------------------
+func DebugPrintoutNasFieldEntries(obj *objects.Model) {
+	for _, c := range obj.NasCardList {
+		DebugPrintoutEntryLines(c.Fields)
+	}
+}
+
+// ----------------------------------------------------------------------------
+//
 //	DebugPrintoutNasCardStats
 //
 // ----------------------------------------------------------------------------
@@ -63,10 +74,39 @@ func DebugPrintoutNasCardStats(obj *objects.Model) {
 
 // ----------------------------------------------------------------------------
 //
-//	DeburgPrintoutEntries
+//	DebugPrintoutEntries
 //
 // ----------------------------------------------------------------------------
-func DeburgPrintoutEntries(row []string) int {
+func DebugPrintoutEntries(row []string) int {
+	var debug_printout []string
+	debug_printout = GetPrintoutEntries(row)
+	fmt.Println(strings.Join(debug_printout, ""))
+	return 0
+}
+
+// ----------------------------------------------------------------------------
+//
+//	DebugPrintoutEntryLines
+//
+// ----------------------------------------------------------------------------
+func DebugPrintoutEntryLines(entry_lines [][]string) int {
+	var debug_printout []string
+	// fmt.Println(rows, len(entry_lines))
+	fmt.Println(get_small_field_optic())
+	for _, line := range entry_lines {
+		debug_printout = GetPrintoutEntries(line)
+		fmt.Println(strings.Join(debug_printout, ""))
+	}
+	return 0
+}
+
+// ----------------------------------------------------------------------------
+//
+//	GetPrintoutEntries
+//
+// ----------------------------------------------------------------------------
+func GetPrintoutEntries(row []string) []string {
+	var debug_printout []string
 	isLargeField := false
 	if len(row) > 0 && strings.Contains(row[0], "*") {
 		isLargeField = true
@@ -74,41 +114,40 @@ func DeburgPrintoutEntries(row []string) int {
 	// (1)
 	// small field output
 	if !isLargeField {
-		// optic for small field: +--------+--------+--------+
-		fmt.Print("+")
-		for range row {
-			fmt.Print(strings.Repeat("-", 7) + "+")
-		}
-		fmt.Println()
-		// data
 		for _, field := range row {
-			fmt.Printf("%-8s", field)
+			debug_printout = append(debug_printout, fmt.Sprintf("%-8s", field))
 		}
-		fmt.Println("")
 		// (2)
 		// large field output
 	} else {
-		// optic for large field: +-------+---------------+---------------+
-		fmt.Print("+" + strings.Repeat("-", 7) + "+")
-		for i := 0; i < 4; i++ {
-			fmt.Print(strings.Repeat("-", 15) + "+")
-		}
-		fmt.Print(strings.Repeat("-", 7) + "+")
-		fmt.Println()
-		// data
-		fmt.Println(row, len(row))
-		fmt.Printf("%-8s", row[0])
+		debug_printout = append(debug_printout, fmt.Sprintf("%-8s", row[0]))
 		for i := 1; i < 5 && i < len(row); i++ {
-			fmt.Printf("%-16s", row[i])
+			debug_printout = append(debug_printout, fmt.Sprintf("%-16s", row[i]))
 		}
 		if len(row) >= 5 {
-			fmt.Printf("%-8s", row[5])
-			fmt.Printf("\n")
+			debug_printout = append(debug_printout, fmt.Sprintf("%-8s", row[5]))
 		} else {
-			fmt.Println("")
+			debug_printout = append(debug_printout, "")
 		}
-
 	}
+	// return value as slice of strings
+	return debug_printout
+}
 
-	return 0
+// ----------------------------------------------------------------------------
+//
+//	get_small_field_optic
+//
+// ----------------------------------------------------------------------------
+func get_small_field_optic() string {
+	return "+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+"
+}
+
+// ----------------------------------------------------------------------------
+//
+//	get_large_field_optic
+//
+// ----------------------------------------------------------------------------
+func get_large_field_optic() string {
+	return "+-------+---------------+---------------+---------------+---------------+-------+"
 }

@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/objects"
 )
 
@@ -102,7 +101,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 		// (2) CARD - first is a letter
 		// new card alert, write existing buffer in object and setup for new card
 		if (firstSign >= 'a' && firstSign <= 'z') || (firstSign >= 'A' && firstSign <= 'Z') {
-			// (2.1) there is content in current card that needs to be saved in object
+			// (2.1) there is content that needs to be saved in object
 			if len(currentCard) > 0 {
 				// write existing card into NasCards and NasCardList
 				// create new string slice, initialize nil, add content
@@ -116,31 +115,26 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				// clean up current card and assign new data
 				currentCard = currentCard[:0]
 				currentCard = append(currentCard, line)
-
-				f_entries = get_fields_from_line(line)
-
 				// clean up current entry lines and assign new data
 				f_entry_lines = f_entry_lines[:0]
+				f_entries = get_fields_from_line(line)
 				f_entry_lines = append(f_entry_lines, f_entries)
-
+				// we are inCard
 				inCard = true
 				// (2.2) simply add line to current card, no action with previous card
 			} else {
 				currentCard = append(currentCard, line)
-
 				f_entries = get_fields_from_line(line)
 				f_entry_lines = append(f_entry_lines, f_entries)
-
+				// we are inCard
 				inCard = true
 			}
 			// (3) CONT - in card any continuation line
 		} else {
 			if inCard {
 				currentCard = append(currentCard, line)
-
 				f_entries = get_fields_from_line(line)
 				f_entry_lines = append(f_entry_lines, f_entries)
-
 			}
 		}
 	}
@@ -156,6 +150,8 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 	}
 	// stats of file
 	fmt.Println("lines/cards: ", lineCount, len(obj.NasCards), len(obj.NasCardList))
+	// debug printout
+	// debug.DebugPrintoutNasFieldEntries(obj)
 	// return scanner error
 	return len(obj.NasCards), len(obj.NasCardList), scanner.Err()
 }
@@ -196,11 +192,8 @@ func parseSmallField(line string) []string {
 		end := start + 8
 		// append according value in slice
 		row = append(row, strings.TrimSpace(line[start:end]))
-		// deb := strings.TrimSpace(line[start:end])
-		// fmt.Println(deb)
-
 	}
-	debug.DeburgPrintoutEntries(row)
+	// return slice
 	return row
 }
 
@@ -210,16 +203,21 @@ func parseSmallField(line string) []string {
 //
 // ----------------------------------------------------------------------------
 func parseLargeField(line string) []string {
+	// fill up line to 80 char
 	line += strings.Repeat(" ", 80-len(line))
+	// pre-definition of slice with 6 entries
 	row := make([]string, 0, 6)
+	// first entry (8 char)
 	row = append(row, strings.TrimSpace(line[0:8]))
+	// next four entries (4x16 char)
 	for j := 0; j < 4; j++ {
 		start := 8 + j*16
 		end := start + 16
 		row = append(row, strings.TrimSpace(line[start:end]))
 	}
+	// last entry (8 char)
 	row = append(row, strings.TrimSpace(line[72:80]))
-	debug.DeburgPrintoutEntries(row)
+	// return slice
 	return row
 }
 
@@ -229,25 +227,29 @@ func parseLargeField(line string) []string {
 //
 // ----------------------------------------------------------------------------
 func parseFreeField(line string) []string {
-	var finalRow []string
-	row := strings.Split(line, ",")
-
-	for i := range row {
-		row[i] = strings.TrimSpace(row[i])
+	// variables
+	var row []string
+	// slice of strings, splitted by komma
+	pre_row := strings.Split(line, ",")
+	// clean up entries
+	for i := range pre_row {
+		pre_row[i] = strings.TrimSpace(pre_row[i])
 	}
-	if strings.Contains(row[0], "*") {
-
-		finalRow = make([]string, 6)
-		for i := 0; i < len(row) && i < 6; i++ {
-			finalRow[i] = row[i]
+	// assign values to final row
+	// (1) LARGE FIELD
+	if strings.Contains(pre_row[0], "*") {
+		row = make([]string, 6)
+		for i := 0; i < len(pre_row) && i < 6; i++ {
+			row[i] = pre_row[i]
 		}
+		// (2) SMALL FIELD
 	} else {
-		finalRow = make([]string, 10)
-		for i := 0; i < len(row) && i < 10; i++ {
-			finalRow[i] = row[i]
+		row = make([]string, 10)
+		for i := 0; i < len(pre_row) && i < 10; i++ {
+			row[i] = pre_row[i]
 		}
 	}
-	debug.DeburgPrintoutEntries(row)
+	// return final slice
 	return row
 }
 
@@ -287,13 +289,10 @@ func ExtractCardName(line string) string {
 	}
 	name := strings.TrimSpace(line[:8])
 	sepIndex := strings.IndexAny(name, ",+ *")
-
 	if sepIndex > 0 {
 		name = name[:sepIndex] // Bis zum Trennzeichen abschneiden
 	}
-
 	return strings.ToUpper(strings.TrimSpace(name))
-
 }
 
 // ----------------------------------------------------------------------------
