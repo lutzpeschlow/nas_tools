@@ -26,7 +26,7 @@
     },
     "GET_CARD_ENTRY": {
       "output_file": "result.txt",
-      "array_01": ["PCOMP",3,3]
+      "array_01": ["PCOMP",4,8]
     }
   }
 }

@@ -328,30 +328,33 @@ func ExtractCardID(line string) string {
 
 // ----------------------------------------------------------------------------
 //
-//	get_one_liner
+//	GetOneLiner
 //
 // ----------------------------------------------------------------------------
 func GetOneLiner(fields [][]string) []string {
 	// variables
 	var one_liner []string
-	var second_large int
-
-	// second large settings:
-	//   0 - small field, no action
-	//   1 - large field, first large field line
-	//   2 - large field, seconde large field line
-	// according value a field will be truncated
-	second_large = 0
+	var second_large bool
+	second_large = false
 	// loop over lines of card
-	for i, f := range fields {
+	for _, f := range fields {
+		// LARGE FIELD handling
 		if len(f) == 6 {
-			second_large = 1
+			// first large entry line
+			if second_large == false {
+				one_liner = append(one_liner, f[:5]...)
+				second_large = true
+				// second large entry line
+			} else {
+				one_liner = append(one_liner, f[1:]...)
+				second_large = false
+			}
 		}
-
-		fmt.Println(i, f, second_large, len(f))
-
+		// SMALL FIELD handling
+		if len(f) == 10 {
+			one_liner = append(one_liner, f...)
+		}
 	}
-	one_liner = fields[0]
-
+	// comlete nas card fields as one dimensional field - one liner
 	return one_liner
 }

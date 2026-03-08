@@ -45,10 +45,11 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		}
 	// get card entry
 	case "GET_CARD_ENTRY":
-		err := nas_methods.GetCardEntry(ctrl, mod)
+		err, entry_list := nas_methods.GetCardEntries(ctrl, mod)
 		if err != nil {
 			return fmt.Errorf("GetCardEntry failed: %w", err)
 		}
+		fmt.Println("entry list length: ", len(entry_list))
 		// default
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)

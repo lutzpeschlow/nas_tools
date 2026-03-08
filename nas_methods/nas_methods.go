@@ -3,6 +3,7 @@ package nas_methods
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -94,58 +95,58 @@ func ExtractCardsAccordingList(ctrl *objects.Control, mod *objects.Model) error 
 	return nil
 }
 
-func getPosition(row, entry int) int {
-	if row == 1 {
-		return entry
-	}
-	return 9 + 8*(row-2) + entry
-}
-
 // ----------------------------------------------------------------------------
 //
 //	GetCardEntry
 //
 // ----------------------------------------------------------------------------
-func GetCardEntry(ctrl *objects.Control, mod *objects.Model) error {
-
+func GetCardEntries(ctrl *objects.Control, mod *objects.Model) (error, []string) {
 	// variables
 	var card_name string
 	var line int
 	var entry int
+	// return list
+	var entry_list []string
 	// var adapted_line int
 	// (0) check length of input array
 	if len(ctrl.Array01) < 3 {
-		return fmt.Errorf("ERROR: input array is expecting 3 entries: %d", len(ctrl.Array01))
+		return fmt.Errorf("ERROR: input array is expecting 3 entries: %d", len(ctrl.Array01)), entry_list
 	}
 	// (1) assign card name
 	if cn, ok := ctrl.Array01[0].(string); ok {
 		card_name = cn
 	} else {
-		return fmt.Errorf("Array01[0] no string: %T=%v", ctrl.Array01[0], ctrl.Array01[0])
+		return fmt.Errorf("Array01[0] no string: %T=%v", ctrl.Array01[0], ctrl.Array01[0]), entry_list
 	}
 	// (2) assign line number
 	if l, ok := ctrl.Array01[1].(float64); ok {
 		line = int(l)
 	} else {
-		return fmt.Errorf("Array01[1] no float64: %T=%v", ctrl.Array01[1], ctrl.Array01[1])
+		return fmt.Errorf("Array01[1] no float64: %T=%v", ctrl.Array01[1], ctrl.Array01[1]), entry_list
 	}
 	// (3) assign entry number
 	if e, ok := ctrl.Array01[2].(float64); ok {
 		entry = int(e)
 	} else {
-		return fmt.Errorf("Array01[2] no float: %T=%v", ctrl.Array01[2], ctrl.Array01[2])
+		return fmt.Errorf("Array01[2] no float: %T=%v", ctrl.Array01[2], ctrl.Array01[2]), entry_list
 	}
 	//
-	fmt.Println(card_name, line, entry)
+	pos := (line-1)*10 + entry
+	fmt.Println(card_name, line, entry, " - ", pos)
 
 	for _, field := range mod.NasCardList {
 		current_name := read.ExtractCardName(field.Fields[0][0])
 		if current_name == card_name {
 			// fmt.Println(i, field.Fields, current_name)
 			one_liner := read.GetOneLiner(field.Fields)
-			fmt.Println(len(one_liner))
+			entry_list = append(entry_list, one_liner[pos-1])
+
 		}
 	}
-	// !!!
-	return nil
+
+	data_to_file := strings.Join(entry_list, "\n") + "\n"
+	ioutil.WriteFile("entry_list.txt", []byte(data_to_file), 0644)
+
+	// two return variables: error value and entry list
+	return nil, entry_list
 }
