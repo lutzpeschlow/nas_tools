@@ -107,6 +107,7 @@ func getPosition(row, entry int) int {
 //
 // ----------------------------------------------------------------------------
 func GetCardEntry(ctrl *objects.Control, mod *objects.Model) error {
+
 	// variables
 	var card_name string
 	var line int
@@ -135,69 +136,16 @@ func GetCardEntry(ctrl *objects.Control, mod *objects.Model) error {
 		return fmt.Errorf("Array01[2] no float: %T=%v", ctrl.Array01[2], ctrl.Array01[2])
 	}
 	//
-	// !!!
-	// !!!
-	one_line := make([]string, 0)
 	fmt.Println(card_name, line, entry)
-	// loop through all cards to get requested entries
-	for _, nas_card := range mod.NasCardList {
-		// card name in fields vs. requested card name
-		current_name := read.ExtractCardName(nas_card.Fields[0][0])
+
+	for _, field := range mod.NasCardList {
+		current_name := read.ExtractCardName(field.Fields[0][0])
 		if current_name == card_name {
-			for i, array := range nas_card.Fields {
-				fmt.Println(i)
-
-				array = array[:len(array)-1]
-
-				if i > 0 {
-					array = array[1:]
-				}
-
-				fmt.Println(">", array, len(array))
-				one_line = append(one_line, array...)
-			}
-			fmt.Println(one_line)
-			// fmt.Println(nas_card.Fields, len(nas_card.Fields))
-
-			//
-			// 	// small field or large field
-			// 	isLargeField := strings.Contains(nas_card.Fields[0][0], "*")
-			// 	adapted_line = 0
-			// 	// adapt line counter depending on format of previous lines
-			// 	var line_add int
-			// 	if line >= 2 {
-			// 		for i, l := range nas_card.Fields {
-			// 			if i+1 < line {
-			// 				fmt.Println(i+1, l)
-			// 				if strings.ContainsAny(nas_card.Fields[i][0], "*") {
-			// 					line_add = line_add + 1
-			// 					fmt.Println(nas_card.Fields[i][0], line_add)
-			// 				}
-			// 			}
-			// 		}
-			//
-			// 		adapted_line = line + line_add
-			// 		fmt.Println("> ", line, line_add, adapted_line)
-			// 	}
-			// 	// (1) LARGE
-			// 	if isLargeField {
-			// 		// entry > 5 go to next slice, 6-9 to index 0-3
-			// 		if entry > 5 {
-			// 			fieldIndex := entry - 6
-			// 			fmt.Println(nas_card.Fields[adapted_line-1][fieldIndex])
-			// 			// regular line
-			// 		} else {
-			// 			fmt.Println(nas_card.Fields[adapted_line-1][entry-1])
-			// 		}
-			// 		// (2) SMALL
-			// 	} else {
-			// 		// Small Field: normaler Zugriff
-			// 		fmt.Println(nas_card.Fields[adapted_line-1][entry-1])
-			// 	}
-
+			// fmt.Println(i, field.Fields, current_name)
+			one_liner := read.GetOneLiner(field.Fields)
+			fmt.Println(len(one_liner))
 		}
-
-		//
 	}
+	// !!!
 	return nil
 }

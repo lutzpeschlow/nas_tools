@@ -109,6 +109,7 @@ func ParseNasFromReader(r io.Reader, obj *objects.Model) (int, int, error) {
 				newCard := &objects.NasCard{
 					Card:   append([]string(nil), currentCard...),
 					Fields: append([][]string(nil), f_entry_lines...),
+					// Oneline: append([]string(nil))
 				}
 				obj.NasCards[nextID] = newCard
 				obj.NasCardList = append(obj.NasCardList, newCard)
@@ -323,4 +324,34 @@ func ExtractCardID(line string) string {
 		id := strings.TrimSpace(line[8:16])
 		return strings.TrimRight(id, " ")
 	}
+}
+
+// ----------------------------------------------------------------------------
+//
+//	get_one_liner
+//
+// ----------------------------------------------------------------------------
+func GetOneLiner(fields [][]string) []string {
+	// variables
+	var one_liner []string
+	var second_large int
+
+	// second large settings:
+	//   0 - small field, no action
+	//   1 - large field, first large field line
+	//   2 - large field, seconde large field line
+	// according value a field will be truncated
+	second_large = 0
+	// loop over lines of card
+	for i, f := range fields {
+		if len(f) == 6 {
+			second_large = 1
+		}
+
+		fmt.Println(i, f, second_large, len(f))
+
+	}
+	one_liner = fields[0]
+
+	return one_liner
 }
