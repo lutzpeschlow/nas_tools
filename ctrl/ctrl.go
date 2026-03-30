@@ -71,6 +71,9 @@ func PrepareControl(obj *objects.Control, osName string) error {
 		if val, ok := actionParams["array_01"]; ok {
 			obj.Array01 = val.([]interface{})
 		}
+		if val, ok := actionParams["limit_size"]; ok {
+			obj.LimitSize = val.(float64)
+		}
 		// full input path
 		if obj.InputDir != "" && obj.InputFile != "" {
 			obj.FullInputPath = filepath.Join(obj.InputDir, obj.InputFile)
@@ -102,7 +105,8 @@ func DebugPrintoutCtrlObj(obj *objects.Control) {
 	fmt.Print("   OutputDir:    ", obj.OutputDir, "\n")
 	fmt.Print("   Option01:     ", obj.Option01, "\n")
 	fmt.Print("   Array01:      ", obj.Array01, "\n")
-	fmt.Print("   Input01:     ", obj.Input01, "\n")
+	fmt.Print("   Input01:      ", obj.Input01, "\n")
+	fmt.Print("   LimitSize:    ", obj.LimitSize, "\n")
 	fmt.Print("      FullInputPath:     ", obj.FullInputPath, "\n")
 	fmt.Print("      FullOutpuPath:     ", obj.FullOutputPath, "\n")
 

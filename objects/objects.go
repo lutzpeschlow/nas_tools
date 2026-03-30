@@ -17,6 +17,7 @@ type Control struct {
 	Option01   string
 	Array01    []interface{}
 	Input01    string
+	LimitSize  float64
 	// combined from previous
 	FullInputPath  string
 	FullOutputPath string

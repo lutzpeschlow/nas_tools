@@ -1,14 +1,16 @@
 {
   "enable": {
-    "READ": false,
+    "READ": true,
     "STATS": false,
-    "SPLIT": false,
+    "SPLIT": true,
     "EXTRACT_ACC_LIST": false, 
-    "GET_CARD_ENTRY": true
+    "GET_CARD_ENTRY": false,
+    "READ_GROUNDING_FORCES": false,
+    "READ_MASSLESS_MECH": false
   },
   "defaults": {
-    "input_file": "sol_101_airbus.exp",
-    "input_dir": "C:/tmp/work/txt/languages/golang/performance_details_for_nas_test"
+    "input_file": "g_and_m.f06",
+    "input_dir": "C:/tmp/prog/nas_tools/cust"
   },
   "actions": {
     "READ": {
@@ -27,6 +29,13 @@
     "GET_CARD_ENTRY": {
       "output_file": "result.txt",
       "array_01": ["PLOAD4",1,4]
+    },
+    "READ_GROUNDING_FORCES": {
+      "output_file": "result.txt",
+      "limit_size": 1.0E4
+    },
+    "READ_MASSLESS_MECH": {
+      "output_file": "result.txt"
     }
   }
 }

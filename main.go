@@ -10,7 +10,6 @@ import (
 	"github.com/lutzpeschlow/nas_tools/cmd"
 	"github.com/lutzpeschlow/nas_tools/ctrl"
 	"github.com/lutzpeschlow/nas_tools/objects"
-	"github.com/lutzpeschlow/nas_tools/read"
 )
 
 // ============================================================================
@@ -49,11 +48,11 @@ func run() error {
 	// model instance
 	mod := objects.Model{}
 	// read input file
-	dat_file := ctrl_obj.FullInputPath
-	_, _, err := read.ReadNasFile(dat_file, &mod)
-	if err != nil {
-		return fmt.Errorf("failed to read %s: %w", dat_file, err)
-	}
+	// dat_file := ctrl_obj.FullInputPath
+	// _, _, err := read.ReadNasFile(dat_file, &mod)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to read %s: %w", dat_file, err)
+	// }
 	// execute main action according enabled value in control object
 	if err := cmd.ExecuteAction(&ctrl_obj, &mod); err != nil {
 		return fmt.Errorf("execute action failed: %w", err)
