@@ -1,15 +1,15 @@
 {
   "enable": {
-    "READ": true,
+    "READ": false,
     "STATS": false,
-    "SPLIT": true,
+    "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
     "GET_CARD_ENTRY": false,
-    "READ_GROUNDING_FORCES": false,
+    "READ_GROUNDING_FORCES": true,
     "READ_MASSLESS_MECH": false
   },
   "defaults": {
-    "input_file": "g_and_m.f06",
+    "input_file": "gf_and_mm.f06",
     "input_dir": "C:/tmp/prog/nas_tools/cust"
   },
   "actions": {
