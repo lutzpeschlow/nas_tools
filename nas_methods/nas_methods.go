@@ -150,3 +150,12 @@ func GetCardEntries(ctrl *objects.Control, mod *objects.Model) (error, []string)
 	// two return variables: error value and entry list
 	return nil, entry_list
 }
+
+// ----------------------------------------------------------------------------
+//
+//	GetCardEntry
+//
+// ----------------------------------------------------------------------------
+func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
+	return nil
+}

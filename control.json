@@ -5,8 +5,8 @@
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
     "GET_CARD_ENTRY": false,
-    "READ_GROUNDING_FORCES": true,
-    "READ_MASSLESS_MECH": false
+    "READ_GROUNDING_FORCES": false,
+    "READ_MASSLESS_MECH": true
   },
   "defaults": {
     "input_file": "gf_and_mm.f06",

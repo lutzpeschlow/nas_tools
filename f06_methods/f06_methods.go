@@ -5,16 +5,27 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/objects"
+	"github.com/lutzpeschlow/nas_tools/utils"
 )
 
 // ----------------------------------------------------------------------------
 //
-//	ReadGroundingForces
+//		ReadGroundingForces
+//
+//	                                                                                                   DIRECTION        4
+//	                          G R O U N D   C H E C K   F O R C E S  ( N + A UT O - S E T )
+//
+//	     POINT ID.   TYPE          T1             T2             T3             R1             R2             R3
+//	     10800080      G      0.0            0.0            0.0            2.958194E+11   0.0            0.0
+//	     10800100      G      0.0           -5.570115E+11   5.321358E+11   0.0            0.0            0.0
+//	     10800270      G      0.0            9.622509E+11   0.0            2.724761E+11   0.0           -8.686390E+11
+//	     10800280      G      0.0            0.0           -2.535309E+11   0.0            0.0           -2.648989E+11
+//	     10800290      G      0.0            0.0           -2.943361E+11   0.0            0.0            0.0
+//	     10800320      G      0.0           -4.100117E+11  -3.341411E+11   0.0            0.0            0.0
 //
 // ----------------------------------------------------------------------------
 func ReadGroundingForces(ctrl *objects.Control, mod *objects.Model) error {
@@ -75,11 +86,11 @@ func ReadGroundingForces(ctrl *objects.Control, mod *objects.Model) error {
 
 	}
 	// write text file and session file
-	err = WriteTxtFile(ctrl.FullOutputPath, foundIDs)
+	err = utils.WriteTxtFile(ctrl.FullOutputPath, foundIDs)
 	if err != nil {
 		return err
 	}
-	err = WriteSessionFile("g", "node", ctrl.FullOutputPath, foundIDs)
+	err = utils.WriteSessionFile("grounding_nodes", "node", ctrl.FullOutputPath, foundIDs)
 	if err != nil {
 		return err
 	}
@@ -91,64 +102,86 @@ func ReadGroundingForces(ctrl *objects.Control, mod *objects.Model) error {
 
 // ----------------------------------------------------------------------------
 //
-//	WriteTxtFile
+//		ReadMasslessMechanisms
 //
-// ----------------------------------------------------------------------------
-func WriteTxtFile(filePath string, lines []string) error {
-	out, err := os.Create(filePath)
-	if err != nil {
-		return fmt.Errorf("create output file %s: %w", filePath, err)
-	}
-	defer out.Close()
-	for _, line := range lines {
-		if _, err := fmt.Fprintln(out, line); err != nil {
-			return fmt.Errorf("write output file %s: %w", filePath, err)
-		}
-	}
-	return nil
-}
-
-// ----------------------------------------------------------------------------
-//
-//	WriteSessionFile
-//
-// ----------------------------------------------------------------------------
-func WriteSessionFile(groupName, entityType, outputPath string, ids []string) error {
-	sesPath := strings.TrimSuffix(outputPath, filepath.Ext(outputPath)) + ".ses"
-	f, err := os.Create(sesPath)
-	if err != nil {
-		return fmt.Errorf("create session file %s: %w", sesPath, err)
-	}
-	defer f.Close()
-	if _, err := fmt.Fprintf(f, "ga_group_create(%q)\n", groupName); err != nil {
-		return err
-	}
-	if _, err := fmt.Fprintf(f, "ga_group_entity_add(%q, %q // @ \n", groupName, entityType); err != nil {
-		return err
-	}
-	for i, id := range ids {
-		if i == len(ids)-1 {
-			if _, err := fmt.Fprintf(f, "\" %s \" )\n", id); err != nil {
-				return err
-			}
-		} else {
-			if _, err := fmt.Fprintf(f, "\" %s \" // @ \n", id); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-// ----------------------------------------------------------------------------
-//
-//	ReadMasslessMechanisms
+//	   15201301 T1  1.00000E+00  15201301 T2  1.00000E+00  15201301 T3  1.00000E+00  15201301 R1  1.00000E+00  15201301 R2  1.00000E+00
+//	   15201301 R3  1.00000E+00  15201302 T1  1.00000E+00  15201302 T2  1.00000E+00  15201302 T3  1.00000E+00
+//	   15201302 R2  1.00000E+00  15201302 R3  1.00000E+00  15201303 T1  1.00000E+00  15201303 T2  1.00000E+00  15201303 T3  1.00000E+00
+//	   15201301 T1  1.00000E+00  15201301 T2  1.00000E+00  15201301 T3  1.00000E+00
+//	   15201301 R3  1.00000E+00  15201302 T1  1.00000E+00  15201302 T2  1.00000E+00  15201302 T3  1.00000E+00  15201302 R1  1.00000E+00
+//	   15201302 R2  1.00000E+00  15201302 R3  1.00000E+00
+//	   15201301 T1  1.00000E+00  15201301 T2  1.00000E+00  15201301 T3  1.00000E+00  15201301 R1  1.00000E+00  15201301 R2  1.00000E+00
+//	   15201301 R3  1.00000E+00  15201302 T1  1.00000E+00  15201302 T2  1.00000E+00  15201302 T3  1.00000E+00  15201302 R1  1.00000E+00
+//	   15201302 R2  1.00000E+00
 //
 // ----------------------------------------------------------------------------
 func ReadMasslessMechanisms(ctrl *objects.Control, mod *objects.Model) error {
-	// variables
-	fmt.Println(" .. .. ..")
-	// return list
-
+	fmt.Println("reading massless mechanisms ...")
+	// set input file
+	f06_file := ctrl.FullInputPath
+	f, err := os.Open(f06_file)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	// prepare input file reader
+	scanner := bufio.NewScanner(f)
+	readFlag := false
+	foundIDs := []string{}
+	allowedDirs := []string{"T1", "T2", "T3", "R1", "R2", "R3"}
+	// loop over input file lines
+	for scanner.Scan() {
+		line := scanner.Text()
+		// VAXW table recognized
+		if strings.Contains(line, "VAXW") {
+			readFlag = true
+			continue
+		}
+		if !readFlag {
+			continue
+		}
+		// split line
+		fields := strings.Fields(line)
+		// check block length of 3,6,9,12,15
+		if len(fields)%3 != 0 {
+			continue
+		}
+		// extract node ids from blocks
+		for i := 0; i < len(fields); i += 3 {
+			// check of T1,T2,T3,R1,R2,R3 content
+			if i+1 >= len(fields) {
+				continue
+			}
+			dir := fields[i+1]
+			okDir := false
+			for _, allowed := range allowedDirs {
+				if strings.Contains(dir, allowed) {
+					okDir = true
+					break
+				}
+			}
+			if !okDir {
+				continue
+			}
+			// put node id into foundIDs array
+			if _, err := strconv.Atoi(fields[i]); err == nil {
+				foundIDs = append(foundIDs, fields[i])
+			}
+		}
+	}
+	// remove duplicate entries
+	foundIDs = utils.RemoveDuplicateEntries(foundIDs)
+	// write text file and session file
+	err = utils.WriteTxtFile(ctrl.FullOutputPath, foundIDs)
+	if err != nil {
+		return err
+	}
+	err = utils.WriteSessionFile("massless_nodes", "node", ctrl.FullOutputPath, foundIDs)
+	if err != nil {
+		return err
+	}
+	// reporting
+	fmt.Println("number of massless nodes: ", len(foundIDs))
+	// return value
 	return nil
 }
