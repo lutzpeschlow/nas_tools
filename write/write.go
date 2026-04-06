@@ -94,3 +94,27 @@ func WriteCardsToFiles(dir string, obj *objects.Model) error {
 	// return value
 	return nil
 }
+
+// ----------------------------------------------------------------------------
+//
+//	WriteNewCards
+//
+// ----------------------------------------------------------------------------
+func WriteNewCards(filename string, mod *objects.Model) error {
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	for _, card := range mod.NewCardList {
+		if len(card.Card) == 0 {
+			continue
+		}
+		for _, line := range card.Card {
+			if _, err := fmt.Fprintln(f, line); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}

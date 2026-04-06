@@ -18,6 +18,8 @@ type Control struct {
 	Array01    []interface{}
 	Input01    string
 	LimitSize  float64
+	PbushID    int64
+	CbushID    int64
 	// combined from previous
 	FullInputPath  string
 	FullOutputPath string
@@ -31,6 +33,8 @@ type Model struct {
 	NasCards     map[int]*NasCard
 	NasCardList  []*NasCard
 	NasCardStats map[string]int
+	// new cards
+	NewCardList []*NasCard
 }
 
 // NasCard object

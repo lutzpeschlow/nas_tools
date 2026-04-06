@@ -1,16 +1,16 @@
 {
   "enable": {
     "READ": false,
-    "STATS": true,
+    "STATS": false,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
     "GET_CARD_ENTRY": false,
     "READ_GROUNDING_FORCES": false,
     "READ_MASSLESS_MECH": false,
-    "MPC_TO_CBUSH": false
+    "MPC_TO_CBUSH": true
   },
   "defaults": {
-    "input_file": "m2.exp",
+    "input_file": "mpc.txt",
     "input_dir": "C:/tmp/prog/nas_tools/cust"
   },
   "actions": {
@@ -40,8 +40,8 @@
     },
     "MPC_TO_CBUSH": {
       "output_file": "result.txt",
-      "pbush_id": 200001,
-      "cbush_id": 200001
+      "pbush_id": 50001,
+      "cbush_id": 50001
     }
   }
 }

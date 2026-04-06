@@ -74,6 +74,16 @@ func PrepareControl(obj *objects.Control, osName string) error {
 		if val, ok := actionParams["limit_size"]; ok {
 			obj.LimitSize = val.(float64)
 		}
+		if val, ok := actionParams["pbush_id"]; ok {
+			if f, ok := val.(float64); ok {
+				obj.PbushID = int64(f)
+			}
+		}
+		if val, ok := actionParams["cbush_id"]; ok {
+			if f, ok := val.(float64); ok {
+				obj.CbushID = int64(f)
+			}
+		}
 		// full input path
 		if obj.InputDir != "" && obj.InputFile != "" {
 			obj.FullInputPath = filepath.Join(obj.InputDir, obj.InputFile)

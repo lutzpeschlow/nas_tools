@@ -8,8 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/lutzpeschlow/nas_tools/nas_cards"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
+	"github.com/lutzpeschlow/nas_tools/write"
 )
 
 // ----------------------------------------------------------------------------
@@ -155,7 +157,65 @@ func GetCardEntries(ctrl *objects.Control, mod *objects.Model) (error, []string)
 //
 //	GetCardEntry
 //
+// $  1   ||  2   ||  3   ||  4   ||  5   ||  6   ||  7   ||  8   ||  9   ||  10  |
+// MPC     9000000050000001       1     -1.  600620       1      1.
+// MPC     9000000050000001       2     -1.  600620       2      1.
+// MPC     9000000050000001       3     -1.  600620       3      1.
+// MPC     9000000050000001       4     -1.  600620       4      1.
+// MPC     9000000050000001       5     -1.  600620       5      1.
+// MPC     9000000050000001       6     -1.  600620       6      1.
+// MPC     9000000050000002       1     -1.  610620       1      1.
+// MPC     9000000050000002       2     -1.  610620       2      1.
+// MPC     9000000050000002       3     -1.  610620       3      1.
+//
+// $  1   ||  2   ||  3   ||  4   ||  5   ||  6   ||  7   ||  8   ||  9   ||  10  |
+// PBUSH   302     K               10000.
+// CBUSH   302     302     501     502     1.0     1.0     0.0
+// CBUSH   cbushid pbushid a       b                                0
 // ----------------------------------------------------------------------------
 func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
+	// current settins for used IDs
+	fmt.Println(ctrl.Action, ctrl.PbushID, ctrl.CbushID)
+	// variables
+	// node pairing struct for node a and node b
+	type Pair struct {
+		A string
+		B string
+	}
+	seen := make(map[Pair]int)
+	lines := make([]string, 0)
+	cbush_id := ctrl.CbushID
+	pbush_id := ctrl.PbushID
+	// loop through nas cards in memory
+	for _, field := range mod.NasCardList {
+		// get card name
+		current_name := read.ExtractCardName(field.Fields[0][0])
+		// found MPC entry
+		if current_name == "MPC" {
+			// assign to struct
+			a := field.Fields[0][2]
+			b := field.Fields[0][5]
+			p := Pair{A: a, B: b}
+			// assign struct to map and count the duplicates
+			seen[p]++
+			line := fmt.Sprintf("%-8s%-8d%-8d%-8s%-8s%-8s%-8s%-8s%-8s%-8s",
+				"CBUSH", cbush_id, pbush_id, a, b, "", "", "", "0", "")
+			newCard := nas_cards.CreateCard(line)
+			mod.NewCardList = append(mod.NewCardList, newCard)
+			lines = append(lines, line)
+			cbush_id = cbush_id + 1
+		}
+	}
+	// reporting
+	fmt.Println("lines: ", len(lines))
+	for p, count := range seen {
+		fmt.Println("  ", p.A, p.B, count)
+	}
+	// write to file
+	err := write.WriteNewCards(ctrl.FullOutputPath, mod)
+	if err != nil {
+		return err
+	}
+	// return value
 	return nil
 }

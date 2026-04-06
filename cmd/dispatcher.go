@@ -88,7 +88,17 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		if err != nil {
 			return fmt.Errorf("ReadMasslessMechanisms failed: %w", err)
 		}
-
+		// mpc to cbush
+	case "MPC_TO_CBUSH":
+		dat_file := ctrl.FullInputPath
+		_, _, err := read.ReadNasFile(dat_file, mod)
+		if err != nil {
+			return fmt.Errorf("failed to read %s: %w", dat_file, err)
+		}
+		err = nas_methods.MpcToCbush(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("MpcToCbush failed: %w", err)
+		}
 		// default
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)

@@ -285,7 +285,7 @@ func GetNasCardsStatistics(obj *objects.Model) (int, error) {
 //
 // ----------------------------------------------------------------------------
 func ExtractCardName(line string) string {
-	if len(line) < 4 {
+	if len(line) < 3 {
 		return ""
 	}
 	end := 8

@@ -1,10 +1,18 @@
 # nas_tools
 several tools processing MSC.Nastran files
 
+
 actions:
 
 READ
 STATS
 SPLIT
 EXTRACT_ACC_LIST
+GET_CARD_ENTRY
+READ_GROUNDING_FORCES
+READ_MASSLESS_MECH
+MPC_TO_CBUSH
+
+
+
 
