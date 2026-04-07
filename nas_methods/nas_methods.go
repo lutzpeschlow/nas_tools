@@ -155,7 +155,7 @@ func GetCardEntries(ctrl *objects.Control, mod *objects.Model) (error, []string)
 
 // ----------------------------------------------------------------------------
 //
-//	GetCardEntry
+//	MpcToCbush
 //
 // $  1   ||  2   ||  3   ||  4   ||  5   ||  6   ||  7   ||  8   ||  9   ||  10  |
 // MPC     9000000050000001       1     -1.  600620       1      1.
@@ -219,3 +219,102 @@ func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
 	// return value
 	return nil
 }
+
+// ----------------------------------------------------------------------------
+//
+//	GetIdRangeTable
+//
+// statistics in steps of 10000 ...
+// 0..10000 - 4146  with last id: 9746
+// 10000..20000 - 4  with last id: 18000
+// 20000..30000 - 14  with last id: 21024
+// 30000..40000 - 0
+// ...
+// statistics in steps of 100000 ...
+// 0..100000 - 4164  with last id: 21024
+// 100000..200000 - 0
+// 200000..300000 - 0
+// ...
+// statistics in steps of 1000000 ...
+// 0..1000000 - 4164  with last id: 21024
+// 1000000..2000000 - 66  with last id: 1558756
+// 2000000..3000000 - 0
+// ...
+// statistics in steps of 10000000 ...
+// 0..10000000 - 4356  with last id: 8506230
+// 10000000..20000000 - 8200  with last id: 18912510
+// 20000000..30000000 - 0
+//
+// ----------------------------------------------------------------------------
+func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model, label string) error {
+	// id range struct
+	type RangeStat struct {
+		Step   int
+		From   int
+		To     int
+		Count  int
+		LastID int
+		Lines  []string
+	}
+	// separate id ranges per step size
+	id_ranges := []RangeStat{
+		{Step: 10000, From: 0, To: 10000, Lines: []string{"statistics in steps of 10000 ...\n"}},
+		{Step: 100000, From: 0, To: 100000, Lines: []string{"statistics in steps of 100000 ...\n"}},
+		{Step: 1000000, From: 0, To: 1000000, Lines: []string{"statistics in steps of 1000000 ...\n"}},
+		{Step: 10000000, From: 0, To: 10000000, Lines: []string{"statistics in steps of 10000000 ...\n"}},
+	}
+
+	fmt.Println("get id range table ...", len(id_ranges))
+	return nil
+}
+
+// func GetIDRangeTable(listing []string, label string, statisticFileName string) ([]int, error) {
+// 	var ids []int
+// 	for _, line := range listing {
+// 		if strings.HasPrefix(getCardName(line), label) {
+// 			id, err := strconv.Atoi(getCardIDByLine(line))
+// 			if err != nil {
+// 				continue
+// 			}
+// 			ids = append(ids, id)
+// 		}
+// 	}
+// 	sort.Ints(ids)
+// 	ranges := []RangeStat{
+// 		{Step: 10000, From: 0, To: 10000, Lines: []string{"statistics in steps of 10000 ...\n"}},
+// 		{Step: 100000, From: 0, To: 100000, Lines: []string{"statistics in steps of 100000 ...\n"}},
+// 		{Step: 1000000, From: 0, To: 1000000, Lines: []string{"statistics in steps of 1000000 ...\n"}},
+// 		{Step: 10000000, From: 0, To: 10000000, Lines: []string{"statistics in steps of 10000000 ...\n"}},
+// 	}
+//
+// 	for _, id := range ids {
+// 		for i := range ranges {
+// 			rs := &ranges[i]
+//
+// 			for id > rs.To {
+// 				rs.Lines = append(rs.Lines,
+// 					fmt.Sprintf("%d..%d - %d  with last id: %d\n", rs.From, rs.To, rs.Count, rs.LastID))
+// 				rs.From += rs.Step
+// 				rs.To += rs.Step
+// 				rs.Count = 0
+// 			}
+// 			if id > rs.From && id <= rs.To {
+// 				rs.Count++
+// 				rs.LastID = id
+// 			}
+// 		}
+// 	}
+// 	for i := range ranges {
+// 		rs := &ranges[i]
+// 		rs.Lines = append(rs.Lines,
+// 			fmt.Sprintf("%d..%d - %d  with last id: %d\n", rs.From, rs.To, rs.Count, rs.LastID))
+// 	}
+// 	var out []string
+// 	for _, id := range ids {
+// 		out = append(out, fmt.Sprintf("%d\n", id))
+// 	}
+// 	if err := os.WriteFile(statisticFileName, []byte(strings.Join(collectLines(ranges), "")), 0644); err != nil {
+// 		return nil, err
+// 	}
+// 	return ids, nil
+// }
