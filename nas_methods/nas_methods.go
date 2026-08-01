@@ -246,7 +246,7 @@ func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
 // 20000000..30000000 - 0
 //
 // ----------------------------------------------------------------------------
-func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model, label string) error {
+func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
 	// id range struct
 	type RangeStat struct {
 		Step   int

@@ -58,6 +58,7 @@ func WriteNasCards(ctrl *objects.Control, obj *objects.Model) error {
 func WriteCardsToFiles(dir string, obj *objects.Model) error {
 
 	// directory handling
+	// clean up result directory or create new result directory
 	if err := os.RemoveAll(dir); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("ERROR %s DEL: %w", dir, err)
 	}
@@ -65,9 +66,9 @@ func WriteCardsToFiles(dir string, obj *objects.Model) error {
 		return fmt.Errorf("ERROR %s CREATE: %w", dir, err)
 	}
 
-	// map for card types with loop through all cards
+	// map for card types
 	cardTypes := make(map[string][][]string)
-
+	// loop through all cards
 	for _, card := range obj.NasCardList {
 		firstLine := card.Card[0]
 		cardType := read.ExtractCardName(firstLine)

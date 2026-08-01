@@ -12,7 +12,7 @@
   },
   "defaults": {
     "input_file": "split_test_01.dat",
-    "input_dir": "C:/tmp/prog/nas_tools/regression_tests"
+    "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
   },
   "actions": {
     "READ": {
