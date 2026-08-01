@@ -45,7 +45,8 @@
       "cbush_id": 50001
     },
     "GET_ID_RANGES": {
-      "output_dir": "result_dir"
+      "output_dir": "result_dir",
+      "option_01":"G"
     }
   }
 }
