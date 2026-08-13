@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/lutzpeschlow/nas_tools/nas_cards"
@@ -226,8 +228,17 @@ func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
 // 200000..300000 - 66  with last id: 200166
 // ----------------------------------------------------------------------------
 func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
+	var ids []int
 
-	fmt.Println(ctrl.OutputDir, ctrl.Option01)
+	fmt.Println(ctrl.OutputDir)
 
+	for _, card := range mod.NasCardList {
+		firstLine := card.Card[0]
+		id_string := read.ExtractCardID(firstLine)
+		card_id, _ := strconv.Atoi(id_string)
+		ids = append(ids, card_id)
+	}
+	sort.Ints(ids)
+	fmt.Println(ids)
 	return nil
 }

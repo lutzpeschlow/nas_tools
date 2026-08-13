@@ -11,7 +11,7 @@
     "GET_ID_RANGES": true
   },
   "defaults": {
-    "input_file": "split_test_01.dat",
+    "input_file": "grid.txt",
     "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
   },
   "actions": {
