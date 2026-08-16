@@ -75,3 +75,37 @@ func RemoveDuplicateEntries(input []string) []string {
 	}
 	return out
 }
+
+// ----------------------------------------------------------------------------
+//
+//	PrintIdArray
+//
+// ----------------------------------------------------------------------------
+func PrintArray(id_array []int) {
+	len_id_array := len(id_array)
+	// print total array - smaller than 100 entries
+	if len_id_array <= 100 {
+		for i, id := range id_array {
+			if i > 0 && i%10 == 0 {
+				fmt.Println()
+			}
+			fmt.Printf("%8d ", id)
+		}
+		// large array - print first 50 and last 50 entries
+	} else {
+		for i := 0; i < 50; i++ {
+			if i > 0 && i%10 == 0 {
+				fmt.Println()
+			}
+			fmt.Printf("%8d ", id_array[i])
+		}
+		fmt.Println("\n...")
+		for i := len_id_array - 50; i < len_id_array; i++ {
+			if (i-(len_id_array-50)) > 0 && (i-(len_id_array-50))%10 == 0 {
+				fmt.Println()
+			}
+			fmt.Printf("%8d ", id_array[i])
+		}
+	}
+	fmt.Println("\nlength of id array: ", len_id_array)
+}

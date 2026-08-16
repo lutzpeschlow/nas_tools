@@ -13,6 +13,7 @@ import (
 	"github.com/lutzpeschlow/nas_tools/nas_cards"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
+	"github.com/lutzpeschlow/nas_tools/utils"
 	"github.com/lutzpeschlow/nas_tools/write"
 )
 
@@ -230,6 +231,12 @@ func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
 func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
 	var ids []int
 
+	f, err := os.Create("id_file.txt")
+	if err != nil {
+		return fmt.Errorf("create file %s: %w", "id_file.txt", err)
+	}
+	defer f.Close()
+
 	fmt.Println(ctrl.OutputDir)
 
 	for _, card := range mod.NasCardList {
@@ -239,6 +246,37 @@ func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
 		ids = append(ids, card_id)
 	}
 	sort.Ints(ids)
-	fmt.Println(ids)
+	utils.PrintArray((ids))
+
+	const step = 10000
+	currentStart := 0
+	currentEnd := step
+	idx := 0
+
+	// Durchlaufe ALLE Bereiche bis zur letzten ID
+	for currentStart <= ids[len(ids)-1] {
+		count := 0
+		lastID := 0
+
+		// Zähle IDs im aktuellen Bereich
+		for idx < len(ids) && ids[idx] <= currentEnd {
+			count++
+			lastID = ids[idx]
+			idx++
+		}
+
+		// Ausgabe für JEDEN Bereich (auch leere)
+		if count > 0 {
+			fmt.Fprintf(f, "%d..%d - %d  with last id: %d\n", currentStart, currentEnd, count, lastID)
+		} else {
+			fmt.Fprintf(f, "%d..%d - %d\n", currentStart, currentEnd, count)
+		}
+
+		// Nächster Bereich
+		currentStart += step
+		currentEnd += step
+	}
 	return nil
 }
+
+// ----------------------------------------------------------------------------
