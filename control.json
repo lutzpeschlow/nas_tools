@@ -4,14 +4,14 @@
     "STATS": false,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
-    "GET_CARD_ENTRY": false,
+    "GET_CARD_ENTRY": true,
     "READ_GROUNDING_FORCES": false,
     "READ_MASSLESS_MECH": false,
     "MPC_TO_CBUSH": false,
-    "GET_ID_RANGES": true
+    "GET_ID_RANGES": false
   },
   "defaults": {
-    "input_file": "grid.txt",
+    "input_file": "get_card_entry.dat",
     "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
   },
   "actions": {
@@ -30,7 +30,7 @@
     },
     "GET_CARD_ENTRY": {
       "output_file": "result.txt",
-      "array_01": ["PLOAD4",1,4]
+      "array_01": ["PBEAM",1,5]
     },
     "READ_GROUNDING_FORCES": {
       "output_file": "result.txt",
