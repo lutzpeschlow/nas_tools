@@ -4,14 +4,14 @@
     "STATS": false,
     "SPLIT": false,
     "EXTRACT_ACC_LIST": false, 
-    "GET_CARD_ENTRY": true,
+    "GET_CARD_ENTRY": false,
     "READ_GROUNDING_FORCES": false,
-    "READ_MASSLESS_MECH": false,
+    "READ_MASSLESS_MECH": true,
     "MPC_TO_CBUSH": false,
     "GET_ID_RANGES": false
   },
   "defaults": {
-    "input_file": "get_card_entry.dat",
+    "input_file": "gf_and_mm.f06",
     "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
   },
   "actions": {

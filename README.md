@@ -186,8 +186,161 @@ output file containing requested values
 
 
 
+
+
 READ_GROUNDING_FORCES
+
+read grounding forces from .f06 according defined filter value
+
+in .f06 file the grounding forces are a result of a failed groundcheck
+and for each node with a grounding force this result could appear in .f06 file.
+the grounding force itself contains 6 values for each DOF and the filter value can
+be used to filter only grounding forces up to a certain level. 
+for example if the filter value is set to 1.0E4, the maximum value of all six force
+values is used as decider to filter that node as grounded node.
+
+excerpt from .f06 file:
+                                                                                     DIRECTION        6
+                           G R O U N D   C H E C K   F O R C E S  ( F - S E T )
+
+ POINT ID.   TYPE          T1             T2             T3             R1             R2             R3
+ 10670060      G      0.0            0.0            0.0            0.0            7.083236E+10   0.0
+ 10670070      G      0.0            0.0            0.0            0.0            8.452217E+10   0.0
+ 10670080      G      0.0            0.0            0.0            0.0            1.102255E+11   0.0
+ 10670090      G      7.229361E+10   0.0            0.0            0.0            1.074049E+11   6.051408E+10
+
+using arguments:
+  "input_file": "gf_and_mm.f06",
+  "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
+
+  "output_file": "result.txt",
+  "limit_size": 1.0E4
+    
+terminal output:
+debug printout of control object: 
+   Action:       READ_GROUNDING_FORCES
+   InputFile:    gf_and_mm.f06
+   InputDir:     /home/lutz/prog/nas_tools/regression_tests
+   OutputFile:   result.txt
+   OutputDir:    
+   Option01:     
+   Array01:      []
+   Input01:      
+   LimitSize:    10000
+      FullInputPath:     /home/lutz/prog/nas_tools/regression_tests/gf_and_mm.f06
+      FullOutpuPath:     result.txt
+reading grounding forces ...
+number of grounding nodes:  378
+
+output files are result.ses and result.txt whereby result.ses contains the list 
+of filtered nodes prepared for a patran session file that creates a group and 
+result.txt as a list of nodes as simple text file:
+
+==> result.ses <==
+ga_group_create("grounding_nodes")
+ga_group_entity_add("grounding_nodes", "node" // @ 
+" 10670010 " // @ 
+" 10670030 " // @ 
+" 10670040 " // @ 
+" 10670050 " // @ 
+" 10670060 " // @ 
+" 10670070 " // @ 
+" 10670080 " // @ 
+" 10670090 " // @ 
+
+==> result.txt <==
+10670010
+10670030
+10670040
+10670050
+10670060
+10670070
+10670080
+10670090
+10670530
+10670540
+
+
+
+
+
+
+
+
 READ_MASSLESS_MECH
+
+get massless mechanism nodes from VAXW table in .f06 file
+
+in Nastran runs a VAXW table can be printed containing nodes and DOFs with massless mechanisms, 
+these nodes are filtered and will be output
+
+excerpt from .f06:
+
+0                VAXW
+     POINT           VALUE     POINT           VALUE     POINT           VALUE     POINT           VALUE     POINT           VALUE
+
+
+ COLUMN           1
+   15201301 T1  1.00000E+00  15201301 T2  1.00000E+00  15201301 T3  1.00000E+00  15201301 R1  1.00000E+00  15201301 R2  1.00000E+00
+   15201301 R3  1.00000E+00  15201302 T1  1.00000E+00  15201302 T2  1.00000E+00  15201302 T3  1.00000E+00  15201302 R1  1.00000E+00
+   15201302 R2  1.00000E+00  15201302 R3  1.00000E+00  15201303 T1  1.00000E+00  15201303 T2  1.00000E+00  15201303 T3  1.00000E+00
+
+using arguments:
+   "input_file": "gf_and_mm.f06",
+   "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
+
+   "output_file": "result.txt"
+
+terminal output:
+    
+ debug printout of control object: 
+   Action:       READ_MASSLESS_MECH
+   InputFile:    gf_and_mm.f06
+   InputDir:     /home/lutz/prog/nas_tools/regression_tests
+   OutputFile:   result.txt
+   OutputDir:    
+   Option01:     
+   Array01:      []
+   Input01:      
+   LimitSize:    0
+      FullInputPath:     /home/lutz/prog/nas_tools/regression_tests/gf_and_mm.f06
+      FullOutpuPath:     result.txt
+reading massless mechanisms ...
+number of massless nodes:  10   
+
+output files are result.ses and result.txt whereby result.ses contains the list 
+of filtered nodes prepared for a patran session file that creates a group and 
+result.txt as a list of nodes as simple text file:
+
+==> result.ses <==
+ga_group_create("massless_nodes")
+ga_group_entity_add("massless_nodes", "node" // @ 
+" 15201301 " // @ 
+" 15201302 " // @ 
+" 15201303 " // @ 
+" 15201304 " // @ 
+" 15201306 " // @ 
+" 15201307 " // @ 
+" 15201309 " // @ 
+" 15201310 " // @ 
+
+==> result.txt <==
+15201301
+15201302
+15201303
+15201304
+15201306
+15201307
+15201309
+15201310
+15201311
+15201312
+
+
+
+
+
+
 MPC_TO_CBUSH
 GET_ID_RANGES
 
