@@ -46,9 +46,15 @@ func ExtractCardsAccordingList(ctrl *objects.Control, mod *objects.Model) error 
 	fmt.Println("num of IDs: ", len(idSet))
 	// (2) output
 	// (2.1) prepare output file
-	file, err := os.Create(ctrl.OutputFile)
+	// output directory
+	if err := os.MkdirAll(ctrl.OutputDir, 0o755); err != nil {
+		return fmt.Errorf("create output directory %s: %w", ctrl.OutputDir, err)
+	}
+	// output directory and output file
+	outputPath := filepath.Join(ctrl.OutputDir, ctrl.OutputFile)
+	file, err := os.Create(outputPath)
 	if err != nil {
-		return fmt.Errorf("could not create output file %q: %w", ctrl.OutputFile, err)
+		return fmt.Errorf("could not create output file %q: %w", outputPath, err)
 	}
 	defer file.Close()
 	// (2.2) pre-filter function
@@ -229,16 +235,20 @@ func MpcToCbush(ctrl *objects.Control, mod *objects.Model) error {
 // 200000..300000 - 66  with last id: 200166
 // ----------------------------------------------------------------------------
 func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
+	// id array
 	var ids []int
-
-	f, err := os.Create("id_file.txt")
+	// create output directory
+	if err := os.MkdirAll(ctrl.OutputDir, 0o755); err != nil {
+		return fmt.Errorf("create output directory %s: %w", ctrl.OutputDir, err)
+	}
+	// create output file
+	outputPath := filepath.Join(ctrl.OutputDir, "id_file.txt")
+	f, err := os.Create(outputPath)
 	if err != nil {
-		return fmt.Errorf("create file %s: %w", "id_file.txt", err)
+		return fmt.Errorf("create file %s: %w", outputPath, err)
 	}
 	defer f.Close()
-
-	fmt.Println(ctrl.OutputDir)
-
+	// loop through nas card list
 	for _, card := range mod.NasCardList {
 		firstLine := card.Card[0]
 		id_string := read.ExtractCardID(firstLine)
@@ -247,32 +257,28 @@ func GetIdRangeTables(ctrl *objects.Control, mod *objects.Model) error {
 	}
 	sort.Ints(ids)
 	utils.PrintArray((ids))
-
+	// pre definition for steps
 	const step = 10000
 	currentStart := 0
 	currentEnd := step
 	idx := 0
-
-	// Durchlaufe ALLE Bereiche bis zur letzten ID
+	// loop over all ranges
 	for currentStart <= ids[len(ids)-1] {
 		count := 0
 		lastID := 0
-
-		// Zähle IDs im aktuellen Bereich
+		// count ids in current range
 		for idx < len(ids) && ids[idx] <= currentEnd {
 			count++
 			lastID = ids[idx]
 			idx++
 		}
-
-		// Ausgabe für JEDEN Bereich (auch leere)
+		// output of range
 		if count > 0 {
 			fmt.Fprintf(f, "%d..%d - %d  with last id: %d\n", currentStart, currentEnd, count, lastID)
 		} else {
 			fmt.Fprintf(f, "%d..%d - %d\n", currentStart, currentEnd, count)
 		}
-
-		// Nächster Bereich
+		// next range
 		currentStart += step
 		currentEnd += step
 	}

@@ -342,5 +342,125 @@ ga_group_entity_add("massless_nodes", "node" // @
 
 
 MPC_TO_CBUSH
+
+Converts multiple MPC entries to CBUSH elements
+
+To avoid possible grounding effects sometimes it is required to convert MPC entries with non-coincident
+nodes to CBUSH elements which are real finite elements and which avoid possible grounding effects ( which
+depends of course on the used DOF in MPC equations). MPC entries are collected and for each set of MPC
+equations one CBUSH entry with same nodes is created. Element coordinate system is set to basic coordinate
+system 0.
+
+using arguments:
+  "input_file": "mpc_small.txt",
+  "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
+
+  "output_file": "result.txt"
+
+
+terminal output:
+
+debug printout of control object: 
+   Action:       MPC_TO_CBUSH
+   InputFile:    mpc_small.txt
+   InputDir:     /home/lutz/prog/nas_tools/regression_tests
+   OutputFile:   result.txt
+   OutputDir:    
+   Option01:     
+   Array01:      []
+   Input01:      
+   LimitSize:    0
+      FullInputPath:     /home/lutz/prog/nas_tools/regression_tests/mpc_small.txt
+      FullOutpuPath:     result.txt
+... read nastran cards:  /home/lutz/prog/nas_tools/regression_tests/mpc_small.txt
+INFO:  BEGIN BULK -  false
+lines/cards:  80 78 78
+MPC_TO_CBUSH 50001 50001
+lines:  78
+   50000003 620620 6
+   50000004 630620 3
+   50000456 50000460 6
+   50000457 50000461 6
+   50000458 50000462 6
+   50000459 50000463 6
+   50000001 600620 6
+   50000417 10800390 3
+   50000379 50000417 6
+   50000460 10800320 6
+   50000461 10800330 6
+   50000462 10800280 6
+   50000463 10800290 6
+   50000002 610620 6
+
+for example input:
+
+$  1   ||  2   ||  3   ||  4   ||  5   ||  6   ||  7   ||  8   ||  9   ||  10  |
+MPC     9000000050000001       1     -1.  600620       1      1.
+MPC     9000000050000001       2     -1.  600620       2      1.
+MPC     9000000050000001       3     -1.  600620       3      1.
+MPC     9000000050000001       4     -1.  600620       4      1.
+MPC     9000000050000001       5     -1.  600620       5      1.
+MPC     9000000050000001       6     -1.  600620       6      1.
+MPC     9000000050000002       1     -1.  610620       1      1.
+MPC     9000000050000002       2     -1.  610620       2      1.
+MPC     9000000050000002       3     -1.  610620       3      1.
+
+is converted to:
+
+CBUSH   50001   50001   50000001600620                          0               
+CBUSH   50002   50001   50000001600620                          0  
+
+
+
+
+
+
+
+
 GET_ID_RANGES
 
+get id range table for cards in input file
+
+if looking for free id range an existing id range table can be created to get an overview
+of already defined ids. the input file is read and an id range table is created for a certain range
+
+using arguments:
+
+  "input_file": "mpc_small.txt",
+  "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
+
+  "output_dir": "result_dir"
+
+terminal output:
+
+debug printout of control object: 
+   Action:       GET_ID_RANGES
+   InputFile:    any_grids.dat
+   InputDir:     /home/lutz/prog/nas_tools/regression_tests
+   OutputFile:   
+   OutputDir:    result_dir
+   Option01:     
+   Array01:      []
+   Input01:      
+   LimitSize:    0
+      FullInputPath:     /home/lutz/prog/nas_tools/regression_tests/any_grids.dat
+      FullOutpuPath:     result_dir
+... read nastran cards:  /home/lutz/prog/nas_tools/regression_tests/any_grids.dat
+INFO:  BEGIN BULK -  false
+lines/cards:  24 24 24
+     101      102      141      201      202      241      301      321      341      401 
+     421      441    10000    10001    10002    10003    10004    37244  1010007  1010008 
+ 1010009  1010010  1010011  4000002 
+length of id array:  24
+
+example file contains ids:
+
+GRID         101        -832.101-444.341353.2967
+GRID         102        -1055.28-382.563  251.76
+GRID         141        -825.291-563.402870.4579
+
+id_file.txt is created:
+0..10000 - 13  with last id: 10000
+10000..20000 - 4  with last id: 10004
+20000..30000 - 0
+30000..40000 - 1  with last id: 37244
