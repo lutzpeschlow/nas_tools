@@ -12,8 +12,8 @@
     "NAS_BLOCK": true
   },
   "defaults": {
-    "input_file": "reg_test_01.dat",
-    "input_dir": "/tmp/test"
+    "input_file": "ent_ids.txt",
+    "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
   },
   "actions": {
     "READ": {

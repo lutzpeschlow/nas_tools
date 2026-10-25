@@ -5,6 +5,7 @@ import (
 
 	"github.com/lutzpeschlow/nas_tools/debug"
 	"github.com/lutzpeschlow/nas_tools/f06_methods"
+	"github.com/lutzpeschlow/nas_tools/nas_cards"
 	"github.com/lutzpeschlow/nas_tools/nas_methods"
 	"github.com/lutzpeschlow/nas_tools/objects"
 	"github.com/lutzpeschlow/nas_tools/read"
@@ -121,11 +122,10 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 		//
 	// nas blocks
 	case "NAS_BLOCK":
-		err := nas_cards.CreateNasBlocksFromTxt(ctrl, mod)
+		err := nas_cards.CreateNasBlocksFromTxt(ctrl)
 		if err != nil {
 			return fmt.Errorf("CreateNasBlocksFromTxt failed: %w", err)
 		}
-
 	// default
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)

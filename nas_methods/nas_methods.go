@@ -35,9 +35,6 @@ func ExtractCardsAccordingList(ctrl *objects.Control, mod *objects.Model) error 
 		}
 		return fmt.Errorf("cannot open ID file %s: %v", FullInput01, err)
 	}
-	//return fmt.Errorf("error opening ID file %q: %w", FullInput01, err)
-	// return fmt.Errorf(FullInput01, err)
-
 	defer idFile.Close()
 	scanner := bufio.NewScanner(idFile)
 	for scanner.Scan() {

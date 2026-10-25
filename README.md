@@ -13,7 +13,7 @@ READ_GROUNDING_FORCES
 READ_MASSLESS_MECH
 MPC_TO_CBUSH
 GET_ID_RANGES
-
+NAS_BLOCK
 
 
 
@@ -471,3 +471,60 @@ id_file.txt is created:
 10000..20000 - 4  with last id: 10004
 20000..30000 - 0
 30000..40000 - 1  with last id: 37244
+
+
+
+
+
+
+
+NAS_BLOCK
+
+write entity id list as Nastran blocks
+
+to crate any Nastran card with multiple entities very easy, the entity ids as Nastran block could help for that
+
+so that this block can be used directly for fast creation of a final Nastran card
+
+using arguments:
+
+ "input_file": "ent_ids.txt",
+ "input_dir": "/home/lutz/prog/nas_tools/regression_tests"
+
+ "output_file": "result.txt"
+
+terminal output:
+
+debug printout of control object: 
+   Action:       NAS_BLOCK
+   InputFile:    ent_ids.txt
+   InputDir:     /home/lutz/prog/nas_tools/regression_tests
+   OutputFile:   result.txt
+   OutputDir:    
+   Option01:     
+   Array01:      []
+   Input01:      
+   LimitSize:    0
+      FullInputPath:     /home/lutz/prog/nas_tools/regression_tests/ent_ids.txt
+      FullOutpuPath:     result.txt
+number of ids:  12
+
+as input a list of entities, for example a file ent_ids.txt would contain: 
+2
+3
+4:5
+7:10
+12:14
+16 
+
+could be converted to a result.txt:
+       2       3       4       5       7       8       9      10
+      12      13      14      16
+
+
+
+
+
+
+
+      
