@@ -3,12 +3,13 @@
     "READ": false,
     "STATS": false,
     "SPLIT": false,
-    "EXTRACT_ACC_LIST": true, 
+    "EXTRACT_ACC_LIST": false, 
     "GET_CARD_ENTRY": false,
     "READ_GROUNDING_FORCES": false,
     "READ_MASSLESS_MECH": false,
     "MPC_TO_CBUSH": false,
-    "GET_ID_RANGES": false
+    "GET_ID_RANGES": false,
+    "NAS_BLOCK": true
   },
   "defaults": {
     "input_file": "reg_test_01.dat",
@@ -46,6 +47,9 @@
     },
     "GET_ID_RANGES": {
       "output_dir": "result_dir"
+    },
+    "NAS_BLOCK": {
+    "output_file": "result.txt"
     }
   }
 }

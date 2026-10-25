@@ -1,6 +1,10 @@
 package nas_cards
 
-import "github.com/lutzpeschlow/nas_tools/objects"
+import (
+	"fmt"
+
+	"github.com/lutzpeschlow/nas_tools/objects"
+)
 
 // ----------------------------------------------------------------------------
 //
@@ -11,4 +15,10 @@ func CreateCard(cardLine string) *objects.NasCard {
 	return &objects.NasCard{
 		Card: []string{cardLine},
 	}
+}
+
+func CreateNasBlocksFromTxt(ctrl *objects.Control, mod *objects.Model) error {
+	fmt.Println(" nas blocks ... \n")
+
+	return nil
 }

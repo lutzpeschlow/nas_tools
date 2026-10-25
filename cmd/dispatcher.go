@@ -119,6 +119,13 @@ func ExecuteAction(ctrl *objects.Control, mod *objects.Model) error {
 			return fmt.Errorf("GetIdRangeTables failed: %w", err)
 		}
 		//
+	// nas blocks
+	case "NAS_BLOCK":
+		err := nas_cards.CreateNasBlocksFromTxt(ctrl, mod)
+		if err != nil {
+			return fmt.Errorf("CreateNasBlocksFromTxt failed: %w", err)
+		}
+
 	// default
 	default:
 		return fmt.Errorf("unknown action: %s", ctrl.Action)
