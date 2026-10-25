@@ -2,8 +2,8 @@ package nas_methods
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -30,8 +30,14 @@ func ExtractCardsAccordingList(ctrl *objects.Control, mod *objects.Model) error 
 	idSet := make(map[string]bool)
 	idFile, err := os.Open(FullInput01)
 	if err != nil {
-		return fmt.Errorf(FullInput01, err)
+		if errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("ID file not found: %s", FullInput01)
+		}
+		return fmt.Errorf("cannot open ID file %s: %v", FullInput01, err)
 	}
+	//return fmt.Errorf("error opening ID file %q: %w", FullInput01, err)
+	// return fmt.Errorf(FullInput01, err)
+
 	defer idFile.Close()
 	scanner := bufio.NewScanner(idFile)
 	for scanner.Scan() {
@@ -156,7 +162,7 @@ func GetCardEntries(ctrl *objects.Control, mod *objects.Model) (error, []string)
 	}
 
 	data_to_file := strings.Join(entry_list, "\n") + "\n"
-	ioutil.WriteFile("entry_list.txt", []byte(data_to_file), 0644)
+	os.WriteFile(ctrl.OutputFile, []byte(data_to_file), 0644)
 
 	// two return variables: error value and entry list
 	return nil, entry_list

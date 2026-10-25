@@ -113,6 +113,9 @@ example content of result_dir:
 
 
 
+
+
+
 EXTRACT_ACC_LIST
 
 using arguments:
@@ -157,7 +160,11 @@ GET_CARD_ENTRY
 get certain entry of a card and write this entry into list to file
 
 so for example requesting each 5th entry of line 1 in PBEAM card,
-this value is written into separate result file
+this value is written into separate result file, example for PBEAM:
+
+$  1   ||  2   ||  3   ||  4   ||  5   ||  6   ||  7   ||  8   ||  9   |
+PBEAM   2       2       36.     17.28   675.            500.            
+
 
 using arguments:
  "input_file": "reg_test_01.dat",
@@ -173,7 +180,7 @@ PBEAM 1 5  -  5
 entry list length:  8
 
 output file containing requested values
-> more entry_list.txt 
+> more result.txt 
 10.
 1.00563-9
 17.28
